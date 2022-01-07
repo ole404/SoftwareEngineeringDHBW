@@ -1,0 +1,7 @@
+{
+  "name": "tannder",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
