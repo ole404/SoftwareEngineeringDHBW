@@ -14,11 +14,11 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
-      - name: Change directory
-        run: cd client
       - name: Install modules
+        working-directory: ./client
         run: npm i
       - name: Run ESLint
+        working-directory: ./client
         run: npm run lint
 
   lint-server:
@@ -27,9 +27,9 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
-      - name: Change directory
-        run: cd server
       - name: Install modules
+        working-directory: ./server
         run: npm i
       - name: Run ESLint
+        working-directory: ./server
         run: npm run lint
