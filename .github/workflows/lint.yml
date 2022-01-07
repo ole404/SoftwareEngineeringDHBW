@@ -9,7 +9,7 @@ on:
 
 jobs:
   lint-client:
-    name: Run linters
+    name: Lint Client
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
@@ -22,7 +22,7 @@ jobs:
         run: npm run lint
 
   lint-server:
-    name: Run linters
+    name: Lint Server
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
