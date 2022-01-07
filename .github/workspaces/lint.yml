@@ -1,0 +1,35 @@
+name: Lint
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-client:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Change directory
+        run: cd client
+      - name: Install modules
+        run: npm i
+      - name: Run ESLint
+        run: npm run lint
+
+  lint-server:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Change directory
+        run: cd server
+      - name: Install modules
+        run: npm i
+      - name: Run ESLint
+        run: npm run lint
