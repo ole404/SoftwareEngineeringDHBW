@@ -8,7 +8,6 @@ How to contribute to this project
     - improvement/description (to improve current features)
     - fix/description (for bug fixes)
     - doc/description (when only documentation is updated)
-    - test/description (when only tests are updated)
 
 
 # Commit messages format
