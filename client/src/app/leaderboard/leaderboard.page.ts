@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PhotoService } from '../services/photo.service';
 
 @Component({
   selector: 'app-leaderboard',
@@ -6,7 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./leaderboard.page.scss'],
 })
 export class LeaderboardPage implements OnInit {
-  constructor() {}
+  constructor(public photoService: PhotoService) {}
 
   ngOnInit() {}
+
+  takePicture() {
+    this.photoService.takePicture();
+  }
 }
