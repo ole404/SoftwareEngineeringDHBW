@@ -15,10 +15,32 @@ class database {
 
   async insertTree(tree: Tree) {
     const newTree = new this.treeModel(tree);
-    await newTree.save();
+    await newTree.save(function (err: Error) {
+      if (err) return err;
+    });
   }
 
-  async updateScore(treeId: string, newScore: number) {
-    await this.treeModel.findByIdAndUpdate(treeId, { eloRating: newScore });
+  async deleteTree(TreeIdToDelete: string) {
+    await this.treeModel.deleteOne(
+      { treeId: TreeIdToDelete },
+      function (err: Error) {
+        if (err) return err;
+      }
+    );
+  }
+
+  async updateScore(treeIdToUpdate: string, newScore: number) {
+    await this.treeModel.updateOne(
+      { treeId: treeIdToUpdate },
+      { eloRating: newScore },
+      function (err: Error) {
+        if (err) return err;
+      }
+    );
+  }
+
+  async getTree(TreeIdToFind: string): Promise<Tree> {
+    const soughtTree = await this.treeModel.findById(TreeIdToFind).exec();
+    return soughtTree;
   }
 }
