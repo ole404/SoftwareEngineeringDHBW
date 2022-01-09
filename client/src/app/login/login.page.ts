@@ -16,6 +16,9 @@ export class LoginPage implements OnInit {
   async ngOnInit() {
     // Initialize storage on component. However, this is somewhat bad practice since the method is alrady called in the app.component.
     await this.storage.create();
+    // Redirect to voting if name exists
+    const name = await this.storage.get('name');
+    if (name) this.router.navigateByUrl('/voting');
   }
 
   onLogin() {
