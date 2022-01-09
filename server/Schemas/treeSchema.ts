@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-const { Schema } = mongoose;
+const { Schema, model } = mongoose;
 
 interface GeoInfo {
   address: string;
@@ -24,3 +24,5 @@ export const treeSchema = new Schema<Tree>({
   geoInfo: { address: String, lat: Number, lon: Number },
   image: String,
 });
+
+export const treeModel = model<Tree>('Tree', treeSchema);
