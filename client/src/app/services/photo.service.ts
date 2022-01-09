@@ -16,7 +16,7 @@ export class PhotoService {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: true,
-      resultType: CameraResultType.Uri,
+      resultType: CameraResultType.Base64,
     });
 
     // image.webPath will contain a path that can be set as an image src.
@@ -27,5 +27,6 @@ export class PhotoService {
 
     // Can be set to the src of an image now
     console.log(imageUrl);
+    console.log(image);
   }
 }
