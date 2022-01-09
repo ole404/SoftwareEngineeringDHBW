@@ -4,4 +4,25 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+    <ion-fab-button color="light">
+      <ion-icon md="caret-back" ios="chevron-back-circle-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="start">
+      <ion-fab-button
+        routerLink="/leaderboard"
+        routerDirection="forward"
+        color="light"
+      >
+        <ion-icon name="list"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button routerLink="/map" routerDirection="forward" color="light">
+        <ion-icon name="map"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button color="light">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ion-content>
