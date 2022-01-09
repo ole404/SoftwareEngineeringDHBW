@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import Tree from '../interfaces/tree';
 
 @Component({
@@ -7,6 +7,8 @@ import Tree from '../interfaces/tree';
   styleUrls: ['./voting.page.scss'],
 })
 export class VotingPage implements OnInit {
+  @ViewChild('left') leftComponent;
+  @ViewChild('right') rightComponent;
   treeLeft: Tree = {
     id: 'abcd',
     userName: 'Tobias',
@@ -52,10 +54,25 @@ export class VotingPage implements OnInit {
     this.lostLeft = true;
     setTimeout(
       (() => {
+        this.animationOut();
+      }).bind(this),
+      1000
+    );
+    setTimeout(
+      (() => {
         this.resetView();
       }).bind(this),
-      3000
+      2000
     );
+  }
+
+  animationOut() {
+    console.log('I run');
+    console.log(this.leftComponent);
+    console.log(this.leftComponent);
+    this.leftComponent.fade = true;
+    console.log(this.leftComponent);
+    this.rightComponent.fade = true;
   }
 
   resetView() {
@@ -63,5 +80,7 @@ export class VotingPage implements OnInit {
     this.wonRight = false;
     this.lostLeft = false;
     this.lostRight = false;
+    this.leftComponent.fade = false;
+    this.rightComponent.fade = false;
   }
 }

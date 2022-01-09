@@ -10,6 +10,8 @@ export class TreeComponent implements OnInit {
   @Input() tree: Tree;
   @Input() won: boolean;
   @Input() lost: boolean;
+
+  fade = false;
   constructor() {}
 
   ngOnInit() {}
