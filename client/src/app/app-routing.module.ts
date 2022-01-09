@@ -12,6 +12,32 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'map',
+    loadChildren: () => import('./map/map.module').then((m) => m.MapPageModule),
+  },
+  {
+    path: 'leaderboard',
+    loadChildren: () =>
+      import('./leaderboard/leaderboard.module').then(
+        (m) => m.LeaderboardPageModule
+      ),
+  },
+  {
+    path: 'upload',
+    loadChildren: () =>
+      import('./upload/upload.module').then((m) => m.UploadPageModule),
+  },
+  {
+    path: 'voting',
+    loadChildren: () =>
+      import('./voting/voting.module').then((m) => m.VotingPageModule),
+  },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./login/login.module').then((m) => m.LoginPageModule),
+  },
 ];
 
 @NgModule({
