@@ -17,7 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
     IonicModule.forRoot(),
     AppRoutingModule,
     IonicStorageModule.forRoot({
-      name: '__tannder',
+      name: '__tannder', // This is a local storage key for the entire map
       driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
     }),
   ],

@@ -11,12 +11,11 @@ export class AppComponent implements OnInit {
   constructor(private storage: Storage, private router: Router) {}
 
   async ngOnInit() {
+    // Initialize storage
     await this.storage.create();
+    // Try to get name from local storage, redirect to voting page if exists else redirect to login page
     const name = await this.storage.get('name');
-    if (name) {
-      this.router.navigateByUrl('/voting');
-    } else {
-      this.router.navigateByUrl('/login');
-    }
+    if (name) this.router.navigateByUrl('/voting');
+    else this.router.navigateByUrl('/login');
   }
 }
