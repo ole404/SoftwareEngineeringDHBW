@@ -1,7 +1,20 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>login</ion-title>
+    <ion-title>Hello</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <ion-grid style="height: 100%">
+    <ion-row class="ion-align-items-center" style="height: 100%">
+      <ion-col>
+        <div class="ion-text-center">
+          <h1>Hohoho!</h1>
+          <ion-label>What is your name?</ion-label>
+          <ion-input placeholder="Hans Peter" [(ngModel)]="name"></ion-input>
+          <ion-button color="primary" (click)="onLogin()">Login</ion-button>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
