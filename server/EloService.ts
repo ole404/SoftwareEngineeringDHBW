@@ -1,4 +1,4 @@
-import { Player } from './interfaces/player';
+import { WinningTree } from './interfaces/WinningTree';
 /**
  * Returns the expected win percentages for each tree.
  *
@@ -31,15 +31,15 @@ export function calculateExpectation(eloTree1: number, eloTree2: number) {
 export function calculateNewElo(
   eloTree1: number,
   eloTree2: number,
-  whoWon: Player
+  whoWon: WinningTree
 ) {
   const { expectationValueTree1, expectationValueTree2 } = calculateExpectation(
     eloTree1,
     eloTree2
   );
 
-  const treeOneWon = whoWon === Player.One;
-  const treeTwoWon = whoWon === Player.Two;
+  const treeOneWon = whoWon === WinningTree.One;
+  const treeTwoWon = whoWon === WinningTree.Two;
   //If a tree wins a match, their win percentage gets subtracted from one, but if they loose it gets subtracted from zero
   const resultMultiplier1 = treeOneWon
     ? 1 - expectationValueTree1
