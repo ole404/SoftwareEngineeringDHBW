@@ -17,7 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
     IonicModule.forRoot(),
     AppRoutingModule,
     IonicStorageModule.forRoot({
-      name: '__dev',
+      name: '__tannder',
       driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage],
     }),
   ],
