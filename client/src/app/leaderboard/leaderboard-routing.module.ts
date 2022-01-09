@@ -6,8 +6,8 @@ import { LeaderboardPage } from './leaderboard.page';
 const routes: Routes = [
   {
     path: '',
-    component: LeaderboardPage
-  }
+    component: LeaderboardPage,
+  },
 ];
 
 @NgModule({

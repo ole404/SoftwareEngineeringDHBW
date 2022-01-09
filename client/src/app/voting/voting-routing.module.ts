@@ -6,8 +6,8 @@ import { VotingPage } from './voting.page';
 const routes: Routes = [
   {
     path: '',
-    component: VotingPage
-  }
+    component: VotingPage,
+  },
 ];
 
 @NgModule({

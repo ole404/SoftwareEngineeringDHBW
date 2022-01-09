@@ -6,8 +6,8 @@ import { UploadPage } from './upload.page';
 const routes: Routes = [
   {
     path: '',
-    component: UploadPage
-  }
+    component: UploadPage,
+  },
 ];
 
 @NgModule({

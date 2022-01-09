@@ -13,8 +13,8 @@ import { LeaderboardPage } from './leaderboard.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    LeaderboardPageRoutingModule
+    LeaderboardPageRoutingModule,
   ],
-  declarations: [LeaderboardPage]
+  declarations: [LeaderboardPage],
 })
 export class LeaderboardPageModule {}
