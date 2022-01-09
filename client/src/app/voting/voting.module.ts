@@ -8,8 +8,10 @@ import { VotingPageRoutingModule } from './voting-routing.module';
 
 import { VotingPage } from './voting.page';
 
+import { TreeComponent } from './tree/tree.component';
+
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, VotingPageRoutingModule],
-  declarations: [VotingPage],
+  declarations: [VotingPage, TreeComponent],
 })
 export class VotingPageModule {}

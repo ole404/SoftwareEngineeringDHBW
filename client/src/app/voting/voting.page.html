@@ -1,7 +1,35 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>voting</ion-title>
+    <ion-title>Tannder</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <h1>Select the prettier tree!</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <app-voting-tree
+          [tree]="treeLeft"
+          [won]="wonLeft"
+          [lost]="lostLeft"
+          (click)="onLeft()"
+        >
+        </app-voting-tree>
+      </ion-col>
+      <ion-col>
+        <app-voting-tree
+          [tree]="treeRight"
+          [won]="wonRight"
+          [lost]="lostRight"
+          (click)="onRight()"
+        >
+        </app-voting-tree>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

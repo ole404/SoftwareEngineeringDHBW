@@ -1,0 +1,17 @@
+<div *ngIf="won || lost; then thenBlock else elseBlock"></div>
+<ng-template #thenBlock>
+  <img
+    [src]="won ? '/assets/Growing Tree Svg Animation.gif' : '/assets/KPmviSu.gif'"
+    alt="image"
+    height="50px"
+  />
+</ng-template>
+<ng-template #elseBlock><div style="height: 50px"></div></ng-template>
+
+<img
+  src="https://avatars.dicebear.com/api/micah/{{tree.id}}.svg"
+  alt="Image a o tree"
+/>
+<h3>{{tree.treeName}}</h3>
+<p>From: {{tree.userName}}</p>
+<p>Rating: {{tree.eloRating}}</p>
