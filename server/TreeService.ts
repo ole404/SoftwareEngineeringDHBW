@@ -1,4 +1,4 @@
-import mongoose, { Document, model, Query } from 'mongoose';
+import mongoose, { Document, Query } from 'mongoose';
 import { Tree, treeModel } from './Schemas/treeSchema';
 
 class TreeService {
