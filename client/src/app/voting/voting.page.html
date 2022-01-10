@@ -5,16 +5,22 @@
 </ion-header>
 
 <ion-content>
+  <ion-modal
+    trigger="leaderboard-trigger"
+    swipeToClose="true"
+    [presentingElement]="routerOutlet.nativeEl"
+  >
+    <ng-template>
+      <app-leaderboard></app-leaderboard>
+    </ng-template>
+  </ion-modal>
+
   <ion-fab horizontal="end" vertical="bottom" slot="fixed">
     <ion-fab-button color="light">
       <ion-icon md="caret-back" ios="chevron-back-circle-outline"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="start">
-      <ion-fab-button
-        routerLink="/leaderboard"
-        routerDirection="forward"
-        color="light"
-      >
+      <ion-fab-button color="light" id="leaderboard-trigger">
         <ion-icon name="list"></ion-icon>
       </ion-fab-button>
       <ion-fab-button routerLink="/map" routerDirection="forward" color="light">
