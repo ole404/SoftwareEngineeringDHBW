@@ -2,13 +2,13 @@ import Express, { Request, Response } from 'express';
 import { query, param, validationResult } from 'express-validator';
 import { calculateNewElo } from './EloService';
 import { Tree } from './Schemas/treeSchema';
-import { WinningTree } from './interfaces/WinningTree';
-import TreeService from './TreeService';
+
+import { TreeService } from './TreeService';
 const router = Express.Router();
 
 router.get('/tree/:treeId', async (req: Request, res: Response) => {
   param('treeId').isMongoId();
-  const tree = await TreeService.oneTree(req.params.treeId);
+  const tree = await TreeService.getInstance().oneTree(req.params.treeId);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -16,20 +16,35 @@ router.get('/tree/:treeId', async (req: Request, res: Response) => {
   res.send(tree);
 });
 
+
+
 router.post('/vote', async (req: Request, res: Response) => {
   query('loserId').isMongoId();
   query('winnerId').isMongoId();
-  res.status(400).json({ errors: validationResult(req).array() });
+  const errors = validationResult(req);
 
-  const looserTree: Tree = await TreeService.oneTree(req.query.loserId);
-  const winnerTree: Tree = await TreeService.oneTree(req.query.winnerId);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
 
+  const loserId: string = req.query.loserId as string;
+  const winnerId: string = req.query.winnerId as string;
+
+  const looserTree: Tree | null = await TreeService.getInstance().oneTree(
+    loserId
+  );
+  const winnerTree: Tree | null = await TreeService.getInstance().oneTree(
+    winnerId
+  );
+  if (looserTree == null || winnerTree == null) {
+    return res.status(400).json({ errors: [{ msg: 'Tree not found' }] });
+  }
   const { newEloWinnerTree, newEloLooserTree } = calculateNewElo(
     winnerTree.eloRating,
     looserTree.eloRating
   );
-  TreeService.updateScore(req.query.winnerId, newEloWinnerTree);
-  TreeService.updateScore(req.query.loserId, newEloLooserTree);
+  TreeService.getInstance().updateScore(winnerId, newEloWinnerTree);
+  TreeService.getInstance().updateScore(loserId, newEloLooserTree);
 
   res.send(200);
 });
