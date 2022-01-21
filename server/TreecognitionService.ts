@@ -1,6 +1,6 @@
 import { ImageAnnotatorClient, v1 } from '@google-cloud/vision';
 
-class treecognition {
+export class Treecognition {
   client: ImageAnnotatorClient;
 
   /**
