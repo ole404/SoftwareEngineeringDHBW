@@ -1,11 +1,11 @@
 .card {
   width: calc(100% - 20px);
-  --background: url("/assets/white-rose.webp") no-repeat center/cover fixed;
+  --background: url("/assets/white-rose.jpg") no-repeat center/cover fixed;
 }
 
 @media (prefers-color-scheme: dark) {
   .card {
-    --background: url("/assets/black-rose.webp") no-repeat center/cover fixed;
+    --background: url("/assets/black-rose.jpg") no-repeat center/cover fixed;
   }
 }
 
