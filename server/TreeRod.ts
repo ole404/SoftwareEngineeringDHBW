@@ -16,7 +16,10 @@ router.get('/tree/:treeId', async (req: Request, res: Response) => {
   res.send(tree);
 });
 
-
+router.get('/random', async (req: Request, res: Response) => {
+  const trees = await TreeService.getInstance().getTwoRandomTrees();
+  res.send(trees);
+});
 
 router.post('/vote', async (req: Request, res: Response) => {
   query('loserId').isMongoId();
