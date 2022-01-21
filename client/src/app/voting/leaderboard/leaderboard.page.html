@@ -1,0 +1,13 @@
+<ion-content>
+  <ion-card *ngFor="let tree of trees">
+    <img
+      src="https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg"
+    />
+    <ion-card-header>
+      <ion-card-subtitle>From {{tree.userName}}</ion-card-subtitle>
+      <ion-card-title>{{tree.treeName}}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content> Elo: {{tree.eloRating}} </ion-card-content>
+  </ion-card>
+</ion-content>

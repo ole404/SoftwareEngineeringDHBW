@@ -1,0 +1,14 @@
+.background {
+  --background: url("/assets/Marmotamaps_Wallpaper_Inntal_Desktop_1920x1080.jpg")
+    no-repeat center/cover fixed;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
