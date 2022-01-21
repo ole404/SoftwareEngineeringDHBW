@@ -10,6 +10,8 @@ services:
         target: /data/db
   server:
     build: .
+    depends_on:
+      - mongodb
     environment:
       DB_URI: mongodb://admin:admin@mongodb:27017/
       PORT: 8080
