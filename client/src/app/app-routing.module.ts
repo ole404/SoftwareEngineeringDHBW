@@ -17,13 +17,6 @@ const routes: Routes = [
     loadChildren: () => import('./map/map.module').then((m) => m.MapPageModule),
   },
   {
-    path: 'leaderboard',
-    loadChildren: () =>
-      import('./leaderboard/leaderboard.module').then(
-        (m) => m.LeaderboardPageModule
-      ),
-  },
-  {
     path: 'upload',
     loadChildren: () =>
       import('./upload/upload.module').then((m) => m.UploadPageModule),

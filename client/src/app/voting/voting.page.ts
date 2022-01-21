@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IonRouterOutlet } from '@ionic/angular';
 
 @Component({
   selector: 'app-voting',
@@ -6,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./voting.page.scss'],
 })
 export class VotingPage implements OnInit {
-  constructor() {}
+  constructor(public routerOutlet: IonRouterOutlet) {}
 
   ngOnInit() {}
 }
