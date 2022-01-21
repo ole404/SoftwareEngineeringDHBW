@@ -4,7 +4,6 @@ const { Schema, model } = mongoose;
  * Interface for our GeoInformation
  */
 interface GeoInfo {
-  address: string;
   lat: number;
   lon: number;
 }
@@ -25,7 +24,7 @@ export const treeSchema = new Schema<Tree>({
   userName: String,
   treeName: String,
   eloRating: Number,
-  geoInfo: { address: String, lat: Number, lon: Number },
+  geoInfo: { lat: Number, lon: Number },
   image: String,
 });
 //Creating a model from the tree schema
