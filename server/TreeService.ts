@@ -1,7 +1,7 @@
 import mongoose, { Document, Query } from 'mongoose';
 import { Tree, treeModel } from './Schemas/treeSchema';
 
-class TreeService {
+export class TreeService {
   databaseUri: string;
   /**
    * Constructor of the TreeService class
@@ -105,12 +105,16 @@ class TreeService {
     return await treeModel.findById(treeId);
   }
   /**
-   * Returns the ten trees with the highest ELO-Ratings
+   * Returns the trees with the highest ELO-Ratings
    *
+   * @param numberOfTrees - The number of trees to be returned
    * @returns Ten tree objects as an array
    */
-  async getTopTenTrees(): Promise<Tree[]> {
-    const topTrees = await treeModel.find().sort('-eloRating').limit(10);
+  async getTopTrees(numberOfTrees: number): Promise<Tree[]> {
+    const topTrees = await treeModel
+      .find()
+      .sort('-eloRating')
+      .limit(numberOfTrees);
     return topTrees;
   }
 }
