@@ -4,12 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { UploadPageRoutingModule } from './upload-routing.module';
-
 import { UploadPage } from './upload.page';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, UploadPageRoutingModule],
+  imports: [CommonModule, FormsModule, IonicModule],
   declarations: [UploadPage],
 })
 export class UploadPageModule {}
