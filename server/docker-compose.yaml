@@ -12,6 +12,7 @@ services:
     build: .
     environment:
       DB_URI: mongodb://admin:admin@mongodb:27017/
+      GOOGLE_APPLICATION_CREDENTIALS: /app/gcloud.json
       PORT: 8080
     ports:
       - 80:8080
