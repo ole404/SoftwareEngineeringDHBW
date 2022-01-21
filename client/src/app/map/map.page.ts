@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Map, tileLayer, marker, icon } from 'leaflet';
+import { PhotoService } from '../services/photo.service';
 
 @Component({
   selector: 'app-map',
@@ -8,12 +9,15 @@ import { Map, tileLayer, marker, icon } from 'leaflet';
   styleUrls: ['./map.page.scss'],
 })
 export class MapPage implements OnInit {
-  constructor(public plt: Platform) {}
+  constructor(public plt: Platform, public photoService: PhotoService) {}
   ngOnInit() {}
   //ngAfterViewInit(): void{}
-  //ionViewDidLoad(): void{}
+  ionViewDidLoad(): void {}
   ionViewDidEnter() {
     this.initMap();
+  }
+  takePicture() {
+    this.photoService.takePicture();
   }
   private initMap() {
     const map = new Map('map').setView([42.380098, -71.116629], 23); //TODO: maybe adapt zoom and starting location to trees

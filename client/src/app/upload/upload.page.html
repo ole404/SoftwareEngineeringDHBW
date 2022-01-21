@@ -1,7 +1,46 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>upload</ion-title>
+    <ion-buttons slot="end">
+      <ion-button icon-only (click)="closeModal()"
+        ><ion-icon name="close"></ion-icon
+      ></ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content> </ion-content>
+<ion-content>
+  <p>enter tree's details below</p>
+  <img
+    [src]="'data:image/jpeg;base64,' + passedImage.base64String"
+    width="100%"
+    height="100%"
+    alt="Image"
+    *ngIf="passedImage"
+  />
+  <form (submit)="uploadItem()">
+    <ion-item lines="full">
+      <ion-label position="floating">name your tree</ion-label>
+      <ion-input
+        [(ngModel)]="treeNameInput"
+        name="name-input"
+        type="text"
+        required
+      ></ion-input>
+    </ion-item>
+    <ion-row>
+      <ion-col>
+        <ion-button type="submit" color="danger" expand="block"
+          >Submit</ion-button
+        >
+      </ion-col>
+    </ion-row>
+  </form>
+</ion-content>
+
+<!--
+  TODO: 
+   - upload button: on click send base64 to api
+   - pass image to modal either as Uri/blob or base64
+   - embed preview of blob or base64
+-->

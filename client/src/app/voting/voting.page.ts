@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { ModalController, IonRouterOutlet } from '@ionic/angular';
+import { PhotoService } from '../services/photo.service';
+import { UploadPage } from '../upload/upload.page';
 import Tree from '../interfaces/tree';
-import { IonRouterOutlet } from '@ionic/angular';
 
 enum Winner {
   left,
@@ -23,6 +25,9 @@ const requestMock = async () => {
 })
 export class VotingPage implements OnInit {
   @ViewChild('leaderboard') leaderboard;
+
+  imageUrl: string = null;
+  base64image: object = null;
 
   // Used for click validation, so the user can't click multiple times
   clickable = true;
@@ -56,12 +61,43 @@ export class VotingPage implements OnInit {
     },
   };
 
-  constructor(public routerOutlet: IonRouterOutlet) {}
+  // Won and lost (see note above) bound to tree component
+  wonRight = false;
+  lostRight = false;
+
+  constructor(
+    public routerOutlet: IonRouterOutlet,
+    public photoService: PhotoService,
+    private modalCtrl: ModalController
+  ) {}
 
   ngOnInit() {}
 
   openLeaderboard() {
     this.leaderboard.openModal = true;
+  }
+
+  takePicture() {
+    this.photoService
+      .takePicture()
+      .then((image) => {
+        console.log(image);
+        this.base64image = image;
+        this.launchUploadModal();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  async launchUploadModal() {
+    const modal = await this.modalCtrl.create({
+      component: UploadPage,
+      componentProps: {
+        passedImage: this.base64image,
+      },
+    });
+    modal.present();
   }
 
   // User selected left tree
