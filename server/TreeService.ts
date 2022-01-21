@@ -23,6 +23,7 @@ export class TreeService {
    * @param tree - The tree id to be added
    */
   async insertTree(tree: Tree) {
+    tree.eloRating = 1000;
     await treeModel.create(tree);
   }
   /**
