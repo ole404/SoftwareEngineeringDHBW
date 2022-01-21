@@ -40,6 +40,7 @@ export class UploadPage implements OnInit {
       })
       .then((response) => {
         console.log(response);
+        this.closeModal();
       })
       .catch((error) => {
         console.log(error);
