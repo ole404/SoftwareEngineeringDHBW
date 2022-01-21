@@ -59,15 +59,7 @@ export class TreeService {
    * @returns All trees of the database in an array
    */
   async getAllTrees(): Promise<Tree[]> {
-    const soughtTrees = await treeModel.find(function (
-      err: Error,
-      soughtTrees: Query<any, Document<Tree>>
-    ) {
-      if (err) throw err;
-      console.log('Trees found.');
-      return soughtTrees.exec();
-    });
-    return soughtTrees;
+    return await treeModel.find({});
   }
   /**
    * Returns two random trees from the database
@@ -78,23 +70,8 @@ export class TreeService {
     tree1: Tree | null;
     tree2: Tree | null;
   }> {
-    // A random tree is taken out of the first and second half of the database to ensure uniqueness
-    const treeAmount: number = await treeModel.count();
-    const treeNumber1 = Math.floor(
-      (Math.random() * treeAmount) % (treeAmount / 2)
-    );
-    const treeNumber2 = Math.floor(
-      ((Math.random() * treeAmount) % (treeAmount / 2)) + treeAmount / 2
-    );
-    const tree1: Tree | null = await treeModel
-      .findOne()
-      .limit(-1)
-      .skip(treeNumber1);
-    const tree2: Tree | null = await treeModel
-      .findOne()
-      .limit(-1)
-      .skip(treeNumber2);
-    return { tree1, tree2 };
+    const trees = await treeModel.find({ $sample: { size: 2 } });
+    return { tree1: trees[0], tree2: trees[1] };
   }
   /**
    * Returns a specific single tree from the database
