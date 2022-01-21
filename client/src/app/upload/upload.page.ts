@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import axios from 'axios';
 import { Storage } from '@ionic/storage-angular';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 
 @Component({
   selector: 'app-upload',
@@ -12,16 +13,23 @@ export class UploadPage implements OnInit {
   passedImage = null;
   imageAsString: string = null;
   treeNameInput: string = null;
+  lat = 0;
+  lon = 0;
 
   constructor(
     private navParams: NavParams,
     private modalCtrl: ModalController,
-    private storage: Storage
+    private storage: Storage,
+    private geolocation: Geolocation
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.passedImage = this.navParams.get('passedImage');
     this.imageAsString = this.passedImage.base64String;
+
+    const { coords } = await this.geolocation.getCurrentPosition();
+    this.lat = coords.latitude;
+    this.lon = coords.longitude;
   }
 
   closeModal() {
@@ -31,11 +39,15 @@ export class UploadPage implements OnInit {
   async uploadItem() {
     const username = await this.storage.get('name');
     const treename = await this.treeNameInput;
+    if (!treename) return false;
     axios
       .post('/trees/upload', {
         userName: username,
         treeName: treename,
-        geo: {}, //TODO: try collecting from metadata, otherwise plugin?
+        geo: {
+          lat: this.lat,
+          lon: this.lon,
+        },
         image: this.imageAsString,
       })
       .then((response) => {
