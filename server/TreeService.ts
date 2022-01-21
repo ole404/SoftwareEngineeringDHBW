@@ -111,7 +111,10 @@ export class TreeService {
    * @returns Ten tree objects as an array
    */
   async getTopTrees(numberOfTrees: number): Promise<Tree[]> {
-    const topTrees = await treeModel.find().sort('-eloRating').limit(numberOfTrees);
+    const topTrees = await treeModel
+      .find()
+      .sort('-eloRating')
+      .limit(numberOfTrees);
     return topTrees;
   }
 }
