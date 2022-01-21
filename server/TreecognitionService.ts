@@ -7,7 +7,7 @@ export class Treecognition {
    * @param keyFilePath The path to the JSON key file.
    */
   constructor(keyFilePath: string) {
-    this.client = new ImageAnnotatorClient({ keyFile: keyFilePath });
+    this.client = new ImageAnnotatorClient();
   }
   /**
    * To use the function with image Buffers alternativly to base64 strings.
