@@ -1,0 +1,18 @@
+<div class="ion-text-center tree" [ngClass]="{ 'fade': fade}">
+  <div style="height: 50px">
+    <img
+      *ngIf="won || lost"
+      [src]="won ? '/assets/Growing Tree Svg Animation.gif' : '/assets/KPmviSu.gif'"
+      alt="image"
+      height="50px"
+    />
+  </div>
+  <img
+    src="https://avatars.dicebear.com/api/micah/{{tree.id}}.svg"
+    alt="Image a o tree"
+    height="200px"
+  />
+  <h3>{{tree.treeName}}</h3>
+  <p>From: {{tree.userName}}</p>
+  <p>Rating: {{tree.eloRating}}</p>
+</div>

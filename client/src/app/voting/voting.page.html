@@ -1,10 +1,10 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>voting</ion-title>
+    <ion-title>Tannder</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-text-center">
   <ion-modal
     trigger="leaderboard-trigger"
     swipeToClose="true"
@@ -14,7 +14,35 @@
       <app-leaderboard></app-leaderboard>
     </ng-template>
   </ion-modal>
-
+  <ion-grid style="max-width: 500px">
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <h1>Select the prettier tree!</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+      <ion-col>
+        <app-voting-tree
+          #left
+          [tree]="treeLeft"
+          [won]="wonLeft"
+          [lost]="lostLeft"
+          (click)="onLeft()"
+        >
+        </app-voting-tree>
+      </ion-col>
+      <ion-col>
+        <app-voting-tree
+          #right
+          [tree]="treeRight"
+          [won]="wonRight"
+          [lost]="lostRight"
+          (click)="onRight()"
+        >
+        </app-voting-tree>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   <ion-fab horizontal="end" vertical="bottom" slot="fixed">
     <ion-fab-button color="light">
       <ion-icon md="caret-back" ios="chevron-back-circle-outline"></ion-icon>
