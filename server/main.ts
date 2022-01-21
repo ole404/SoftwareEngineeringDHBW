@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import express from 'express';
 import dotenv from 'dotenv';
+import trees from './TreeRod';
 
 const app = express();
 
@@ -9,9 +10,7 @@ dotenv.config();
 
 const port = process.env.PORT;
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-});
+app.use('/trees', trees);
 
 app.listen(port, () => {
   console.log(`Listening on ${port}`);
