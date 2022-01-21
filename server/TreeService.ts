@@ -2,6 +2,19 @@ import mongoose, { Document, Query } from 'mongoose';
 import { Tree, treeModel } from './Schemas/treeSchema';
 
 export class TreeService {
+  private static instance: TreeService;
+
+  public static async initInstance(databaseUri: string): Promise<TreeService> {
+    if (this.instance === undefined) {
+      this.instance = new TreeService(databaseUri);
+      await this.instance.connectDb();
+      return this.instance;
+    } else return this.instance;
+  }
+  public static getInstance(): TreeService {
+    return this.instance;
+  }
+
   databaseUri: string;
   /**
    * Constructor of the TreeService class
