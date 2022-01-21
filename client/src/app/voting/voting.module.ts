@@ -6,12 +6,13 @@ import { IonicModule } from '@ionic/angular';
 
 import { VotingPageRoutingModule } from './voting-routing.module';
 
+import { LeaderboardPage } from './leaderboard/leaderboard.page';
 import { VotingPage } from './voting.page';
 
 import { TreeComponent } from './tree/tree.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, VotingPageRoutingModule],
-  declarations: [VotingPage, TreeComponent],
+  declarations: [VotingPage, LeaderboardPage, TreeComponent],
 })
 export class VotingPageModule {}

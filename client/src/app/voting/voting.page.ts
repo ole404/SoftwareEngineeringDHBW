@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import Tree from '../interfaces/tree';
 /**
  * Important note on won & lost states:
  * Before the user selected the winning tree, won and lost (for left and right) are both false, since a tree has neither lost nor won yet. After the user selects a tree, won and lost variables will be set respectively. They are bound to the tree component. The tree component use these to render the gifs.
  */
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import Tree from '../interfaces/tree';
+import { IonRouterOutlet } from '@ionic/angular';
 
 @Component({
   selector: 'app-voting',
@@ -47,7 +48,7 @@ export class VotingPage implements OnInit {
   // Won and lost (see note above) bound to tree component
   wonRight = false;
   lostRight = false;
-  constructor() {}
+  constructor(public routerOutlet: IonRouterOutlet) {}
 
   ngOnInit() {}
 
