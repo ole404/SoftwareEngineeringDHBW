@@ -4,20 +4,37 @@ import { PhotoService } from '../services/photo.service';
 import { UploadPage } from '../upload/upload.page';
 import Tree from '../interfaces/tree';
 
+enum Winner {
+  left,
+  right,
+}
+
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+const requestMock = async () => {
+  await sleep(500);
+  return 0;
+};
+
 @Component({
   selector: 'app-voting',
   templateUrl: './voting.page.html',
   styleUrls: ['./voting.page.scss'],
 })
 export class VotingPage implements OnInit {
-  @ViewChild('left') leftComponent;
-  @ViewChild('right') rightComponent;
+  @ViewChild('leaderboard') leaderboard;
 
   imageUrl: string = null;
   base64image: object = null;
 
   // Used for click validation, so the user can't click multiple times
   clickable = true;
+  fade = false;
+  winner: Winner;
+  isWinnerLeft = false;
+  isWinnerRight = false;
 
   // Mock a tree object.
   // TODO: query this from api
@@ -31,9 +48,6 @@ export class VotingPage implements OnInit {
       long: -71.116629,
     },
   };
-  // Won and lost (see note above) bound to tree component
-  wonLeft = false;
-  lostLeft = false;
 
   // TODO: query this from api
   treeRight: Tree = {
@@ -46,9 +60,11 @@ export class VotingPage implements OnInit {
       long: -71.116529,
     },
   };
+
   // Won and lost (see note above) bound to tree component
   wonRight = false;
   lostRight = false;
+
   constructor(
     public routerOutlet: IonRouterOutlet,
     public photoService: PhotoService,
@@ -56,6 +72,10 @@ export class VotingPage implements OnInit {
   ) {}
 
   ngOnInit() {}
+
+  openLeaderboard() {
+    this.leaderboard.openModal = true;
+  }
 
   takePicture() {
     this.photoService
@@ -84,8 +104,7 @@ export class VotingPage implements OnInit {
   onLeft() {
     if (!this.verify()) return;
     this.clickable = false;
-    this.wonLeft = true;
-    this.lostRight = true;
+    this.winner = Winner.left;
     // TODO: Api Post here
     this.afterSelect();
   }
@@ -94,8 +113,7 @@ export class VotingPage implements OnInit {
   onRight() {
     if (!this.verify()) return;
     this.clickable = false;
-    this.wonRight = true;
-    this.lostLeft = true;
+    this.winner = Winner.right;
     // TODO: Api Post here
     this.afterSelect();
   }
@@ -108,35 +126,38 @@ export class VotingPage implements OnInit {
   // User selected any tree -> Make animations and reset view after 2 seconds
   afterSelect() {
     // TODO: Start getting next trees here
-    setTimeout(
-      (() => {
-        this.animationOut();
-      }).bind(this),
-      1000
-    );
-    setTimeout(
-      (() => {
-        this.resetView();
-      }).bind(this),
-      2000
-    );
-  }
+    this.isWinnerLeft = this.winner === Winner.left;
+    this.isWinnerRight = this.winner === Winner.right;
 
-  // Start fade animation
-  animationOut() {
-    this.leftComponent.fade = true;
-    this.rightComponent.fade = true;
+    requestMock().then(() => {
+      this.resetView();
+    });
   }
 
   // Reset everyting and query new stuff
   resetView() {
     // TODO: update trees from GET Request from 'after Select'
-    this.clickable = true;
-    this.wonLeft = false;
-    this.wonRight = false;
-    this.lostLeft = false;
-    this.lostRight = false;
-    this.leftComponent.fade = false;
-    this.rightComponent.fade = false;
+    // This simulates wait for GET Request
+    this.fade = true;
+
+    const fadeAnimationLength = 300;
+    const transformAnimationLength = 500;
+
+    setTimeout(
+      (() => {
+        this.winner = undefined;
+        this.isWinnerLeft = this.winner === Winner.left;
+        this.isWinnerRight = this.winner === Winner.right;
+      }).bind(this),
+      fadeAnimationLength
+    );
+
+    setTimeout(
+      (() => {
+        this.clickable = true;
+        this.fade = false;
+      }).bind(this),
+      fadeAnimationLength + transformAnimationLength
+    );
   }
 }

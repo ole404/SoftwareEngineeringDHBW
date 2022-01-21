@@ -41,7 +41,13 @@ export class LeaderboardPage implements OnInit {
     },
   ];
 
+  openModal = false;
+
   constructor() {}
 
   ngOnInit(): void {}
+
+  dismisModal() {
+    this.openModal = false;
+  }
 }

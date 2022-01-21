@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import Tree from 'src/app/interfaces/tree';
 
 @Component({
@@ -9,11 +9,15 @@ import Tree from 'src/app/interfaces/tree';
 export class TreeComponent implements OnInit {
   // Binds a tree and weather this tree has won or lost (or neither, then both are false)
   @Input() tree: Tree;
-  @Input() won: boolean;
-  @Input() lost: boolean;
+  @Output() voteEvent = new EventEmitter();
 
-  fade = false;
+  openPreview = false;
+
   constructor() {}
 
   ngOnInit() {}
+
+  dismisModal() {
+    this.openPreview = false;
+  }
 }
