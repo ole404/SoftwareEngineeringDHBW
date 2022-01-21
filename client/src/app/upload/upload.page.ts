@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'app-upload',
@@ -6,7 +7,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./upload.page.scss'],
 })
 export class UploadPage implements OnInit {
-  constructor() {}
+  passedImage: string = null;
 
-  ngOnInit() {}
+  constructor(
+    private navParams: NavParams,
+    public modalCtrl: ModalController
+  ) {}
+
+  ngOnInit() {
+    this.passedImage = this.navParams.get('passedImage');
+  }
+
+  closeModal() {
+    this.modalCtrl.dismiss();
+  }
 }
