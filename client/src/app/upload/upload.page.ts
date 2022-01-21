@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
+import axios from 'axios';
+import { Storage } from '@ionic/storage-angular';
 
 @Component({
   selector: 'app-upload',
@@ -7,18 +9,40 @@ import { ModalController, NavParams } from '@ionic/angular';
   styleUrls: ['./upload.page.scss'],
 })
 export class UploadPage implements OnInit {
-  passedImage: string = null;
+  passedImage = null;
+  imageAsString: string = null;
+  treeNameInput: string = null;
 
   constructor(
     private navParams: NavParams,
-    public modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private storage: Storage
   ) {}
 
   ngOnInit() {
     this.passedImage = this.navParams.get('passedImage');
+    this.imageAsString = this.passedImage.base64String;
   }
 
   closeModal() {
     this.modalCtrl.dismiss();
+  }
+
+  async uploadItem() {
+    const username = await this.storage.get('name');
+    const treename = await this.treeNameInput;
+    axios
+      .post('/trees/upload', {
+        userName: username,
+        treeName: treename,
+        geo: {}, //TODO: try collecting from metadata, otherwise plugin?
+        image: this.imageAsString,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }
