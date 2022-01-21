@@ -1,11 +1,11 @@
-.tree {
-  opacity: 1;
-  -webkit-transition: opacity 1s ease-in-out;
-  -moz-transition: opacity 1s ease-in-out;
-  -ms-transition: opacity 1s ease-in-out;
-  -o-transition: opacity 1s ease-in-out;
-  transition: opacity 1s ease-in-out;
+.card {
+  min-height: 500px;
+  margin: 0;
+  --background: url("/assets/white-rose.webp") no-repeat center/cover fixed;
 }
-.tree.fade {
-  opacity: 0;
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    --background: url("/assets/black-rose.webp") no-repeat center/cover fixed;
+  }
 }

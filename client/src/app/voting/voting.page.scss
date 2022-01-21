@@ -1,0 +1,47 @@
+@import "~swiper/css";
+@import "~swiper/css/effect-cards";
+
+.tree {
+  display: inline-block;
+  opacity: 1;
+  -webkit-transform: translate(0px, 0px);
+  -moz-transform: translate(0px, 0px);
+  -ms-transform: translate(0px, 0px);
+  -o-transform: translate(0px, 0px);
+  transform: translate(0px, 0px);
+
+  -webkit-transition: transform 0.5s ease-in, opacity 0.3s ease-in-out;
+  -moz-transition: transform 0.5s ease-in, opacity 0.3s ease-in-out;
+  -ms-transition: transform 0.5s ease-in, opacity 0.3s ease-in-out;
+  -o-transition: transform 0.5s ease-in, opacity 0.3s ease-in-out;
+  transition: transform 0.5s ease-in, opacity 0.3s ease-in-out;
+}
+.tree.fade {
+  opacity: 0;
+}
+.tree.down {
+  -webkit-transform: translate(0px, 5000px);
+  -moz-transform: translate(0px, 5000px);
+  -ms-transform: translate(0px, 5000px);
+  -o-transform: translate(0px, 5000px);
+  transform: translate(0px, 5000px);
+}
+.tree.center.left {
+  -webkit-transform: translate(50%, 0px);
+  -moz-transform: translate(50%, 0px);
+  -ms-transform: translate(50%, 0px);
+  -o-transform: translate(50%, 0px);
+  transform: translate(50%, 0px);
+}
+.tree.center.right {
+  -webkit-transform: translate(-50%, 0px);
+  -moz-transform: translate(-50%, 0px);
+  -ms-transform: translate(-50%, 0px);
+  -o-transform: translate(-50%, 0px);
+  transform: translate(-50%, 0px);
+}
+
+.background {
+  --background: url("/assets/wp8975771-usa-nature-4k-wallpapers.jpg") no-repeat
+    center/cover fixed;
+}

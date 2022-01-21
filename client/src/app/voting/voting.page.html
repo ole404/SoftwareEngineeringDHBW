@@ -4,57 +4,47 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-text-center">
-  <ion-modal
-    trigger="leaderboard-trigger"
-    swipeToClose="true"
-    [presentingElement]="routerOutlet.nativeEl"
-  >
-    <ng-template>
-      <app-leaderboard></app-leaderboard>
-    </ng-template>
-  </ion-modal>
-  <ion-grid style="max-width: 500px">
+<ion-content class="background">
+  <app-leaderboard #leaderboard></app-leaderboard>
+  <ion-grid>
     <ion-row>
       <ion-col class="ion-text-center">
         <h1>Select the prettier tree!</h1>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-justify-content-center">
-      <ion-col>
+    <ion-row>
+      <ion-col size="6" size-sm="6">
         <app-voting-tree
-          #left
+          class="tree left"
+          [ngClass]="{ 'fade': fade, 'center': isWinnerLeft, 'down': isWinnerRight }"
           [tree]="treeLeft"
-          [won]="wonLeft"
-          [lost]="lostLeft"
-          (click)="onLeft()"
+          (voteEvent)="onLeft()"
         >
         </app-voting-tree>
       </ion-col>
-      <ion-col>
+      <ion-col size="6" size-sm="6">
         <app-voting-tree
-          #right
+          class="tree right"
+          [ngClass]="{ 'fade': fade, 'center': isWinnerRight, 'down': isWinnerLeft }"
           [tree]="treeRight"
-          [won]="wonRight"
-          [lost]="lostRight"
-          (click)="onRight()"
+          (voteEvent)="onRight()"
         >
         </app-voting-tree>
       </ion-col>
     </ion-row>
   </ion-grid>
   <ion-fab horizontal="end" vertical="bottom" slot="fixed">
-    <ion-fab-button color="light">
+    <ion-fab-button color="secondary">
       <ion-icon md="caret-back" ios="chevron-back-circle-outline"></ion-icon>
     </ion-fab-button>
     <ion-fab-list side="start">
-      <ion-fab-button color="light" id="leaderboard-trigger">
+      <ion-fab-button (click)="openLeaderboard()">
         <ion-icon name="list"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button routerLink="/map" routerDirection="forward" color="light">
+      <ion-fab-button routerLink="/map" routerDirection="forward">
         <ion-icon name="map"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button color="light">
+      <ion-fab-button>
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
