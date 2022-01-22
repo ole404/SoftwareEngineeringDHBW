@@ -9,15 +9,20 @@ services:
         source: TANNDER_DATA
         target: /data/db
   server:
-    build: .
+    build:
+      context: ./..
+      dockerfile: ./docker/Dockerfile
+      args:
+        - PORT=3000
     depends_on:
       - mongodb
     environment:
       DB_URI: mongodb://admin:admin@mongodb:27017/
       GOOGLE_APPLICATION_CREDENTIALS: /app/gcloud.json
       PORT: 3000
+      NODE_ENV: production
     ports:
-      - 3000:3000
+      - 80:3000
 
 volumes:
   TANNDER_DATA:
