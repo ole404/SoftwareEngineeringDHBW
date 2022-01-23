@@ -1,16 +1,14 @@
 # Tannder
 
-## Run
+TODO: write about app
 
-In order to run the application a Google API-Key is needed, also docker must be installed.
-
-### Google-Cloud Account
+## Prereq: Google-Cloud Account
 
 In order to use the Backend properly, a Google-Cloud account is needed. Please follow the Tutorial for the vision api authentication and projekt set-up on [this webiste](https://cloud.google.com/vision/docs/labels#set-up-your-gcp-project-and-authentication). After succesfully creating an account, download the config file and rename it to `gcloud.json` and paste it into the `server` folder.
 
-### Run with docker-compose
+## Run
 
-Please ensure you can run `docker-compose` commands. To install docker visist the [Docker Homepage](https://www.docker.com/get-started)
+**Note:** Please ensure you can run `docker-compose` commands. To install docker visist the [Docker Homepage](https://www.docker.com/get-started)
 
 To start the application in `production` mode run one of the following commands:
 
@@ -34,15 +32,6 @@ code ./.vscode/tannder.code-workspace
 
 Then install all the recommended extensions. This will enable automated code lints and format on save.
 
-### Express Server
-
-In order to use the Backend properly, a Google-Cloud account is needed. Please follow the Tutorial for the vision api authentication and projekt set-up on [this webiste](https://cloud.google.com/vision/docs/labels#set-up-your-gcp-project-and-authentication).
-After succesfully creating an account, download the config file and rename it to `gcloud.json` and paste it into the `server` folder.
-
-### Linting and formatting
-
-To lint any of `client` or `server` code run `npm run lint`. To format use `npm run format`. However, if you opened the project as VS Code Workspace with the `./.vscode/tannder.code-workspace` file, the code should format on save.
-
 ### MongoDB
 
 **Best Practice:** Start MongoDB in a docker container:
@@ -50,3 +39,45 @@ To lint any of `client` or `server` code run `npm run lint`. To format use `npm 
 ```sh
 docker run --rm -d -p 27017:27017 --name tannder-dev-db -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest
 ```
+
+### Express Server
+
+**Note:** Before starting the server please ensure that the `MongoDB` started!
+
+After succesfully creating an account, download the config file and rename it to `gcloud.json` and paste it into the `server` folder.
+
+To start the `server` in development mode run:
+
+```sh
+cd server
+npm run start:dev
+```
+
+### Ionic Client
+
+You may must install the `ionic-cli` globally with:
+
+```sh
+npm install -g @ionic/cli
+```
+
+Then the `client` can started in development mode with:
+
+```sh
+cd client
+npm run start
+```
+
+### Linting and formatting
+
+To lint any of `client` or `server` code run `npm run lint`. To format use `npm run format`. However, if you opened the project as VS Code Workspace with the `./.vscode/tannder.code-workspace` file, the code should format on save.
+
+Maybe you need to install `eslint` globally with:
+
+```sh
+npm i -g eslint
+```
+
+## Contributing
+
+Please check out our [Contributing Wiki](./contributing.md)
