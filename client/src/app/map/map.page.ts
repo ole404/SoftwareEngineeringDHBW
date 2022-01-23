@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { Map, tileLayer, marker, icon } from 'leaflet';
 import { PhotoService } from '../services/photo.service';
-import axios from 'axios';
+import { ApiService } from '../services/api.service';
+
+import { Tree } from '../interfaces/index';
 
 @Component({
   selector: 'app-map',
@@ -10,9 +12,13 @@ import axios from 'axios';
   styleUrls: ['./map.page.scss'],
 })
 export class MapPage implements OnInit {
-  treeLocations = [];
+  treeLocations: Tree[] = [];
 
-  constructor(public plt: Platform, public photoService: PhotoService) {}
+  constructor(
+    public plt: Platform,
+    public photoService: PhotoService,
+    private api: ApiService
+  ) {}
 
   ngOnInit() {}
   //ngAfterViewInit(): void{}
@@ -26,7 +32,7 @@ export class MapPage implements OnInit {
 
   addMarkers(map) {
     for (const element of this.treeLocations) {
-      const nMarker = new marker([element.geo.lat, element.geo.lon])
+      const nMarker = new marker([element.geo.lat, element.geo.long])
         .bindPopup(
           '<strong>Hello world!</strong><br />I am ' + element.treeName,
           { maxWidth: 500 }
@@ -36,22 +42,9 @@ export class MapPage implements OnInit {
     }
   }
 
-  getLocations(map) {
-    axios
-      .get<object, any>('/trees?max=0')
-      .then((response) => {
-        // handle success
-        this.treeLocations = response;
-        this.addMarkers(map);
-      })
-      .catch((error) => {
-        // handle error
-        console.log(error);
-      })
-      .then(() => {
-        // alway executed
-        console.log('always executed');
-      });
+  async getLocations(map) {
+    this.treeLocations = await this.api.getTrees(0);
+    console.log(this.treeLocations);
   }
 
   private initMap() {
