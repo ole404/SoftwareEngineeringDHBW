@@ -8,6 +8,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -47,6 +48,7 @@ import { UploadComponent } from './components/upload/upload.component';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    Geolocation,
     ApiService,
     GeoService,
     PhotoService,
