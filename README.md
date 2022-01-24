@@ -55,7 +55,7 @@ npm run start:dev
 
 ### Ionic Client
 
-You may must install the `ionic-cli` globally with:
+You must install the `ionic-cli` globally with:
 
 ```sh
 npm install -g @ionic/cli
