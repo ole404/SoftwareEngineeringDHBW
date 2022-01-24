@@ -74,7 +74,7 @@ export class VotingPage implements OnInit {
     this.afterSelect();
   }
 
-  async vote(winningTree: Tree, loosingTree: Tree): Promise{
+  async vote(winningTree: Tree, loosingTree: Tree): Promise<void> {
     await this.api.postVote(winningTree.id, loosingTree.id);
   }
 
