@@ -12,11 +12,6 @@ const routes: Routes = [
     loadChildren: () => import('./map/map.module').then((m) => m.MapPageModule),
   },
   {
-    path: 'upload',
-    loadChildren: () =>
-      import('./upload/upload.module').then((m) => m.UploadPageModule),
-  },
-  {
     path: 'voting',
     loadChildren: () =>
       import('./voting/voting.module').then((m) => m.VotingPageModule),

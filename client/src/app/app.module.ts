@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
@@ -9,10 +10,11 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
+import { ApiService } from './services/api.service';
+import { GeoService } from './services/geo.service';
+import { PhotoService } from './services/photo.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +37,9 @@ import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    Geolocation,
+    ApiService,
+    GeoService,
+    PhotoService,
   ],
   bootstrap: [AppComponent],
 })
