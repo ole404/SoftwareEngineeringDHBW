@@ -2,8 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import http from 'http';
 import cors from 'cors';
-import trees from './TreeRod';
-import { TreeService } from './TreeService';
+import trees from './api/treeRod';
+import { TreeStorage } from './services/treeStorage';
 import bodyParser from 'body-parser';
 import path from 'path';
 
@@ -26,7 +26,7 @@ if (!isProd) app.use(cors());
 
 const port = process.env.PORT;
 
-TreeService.initInstance(process.env.DB_URI as string);
+TreeStorage.initInstance(process.env.DB_URI as string);
 
 app.use('/trees', trees);
 

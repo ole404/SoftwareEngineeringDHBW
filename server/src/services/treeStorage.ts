@@ -1,23 +1,23 @@
-import mongoose, { Document, Query } from 'mongoose';
-import { Tree, treeModel } from './Schemas/treeSchema';
+import mongoose from 'mongoose';
+import { Tree, treeModel } from '../Schemas/treeSchema';
 
-export class TreeService {
-  private static instance: TreeService;
+export class TreeStorage {
+  private static instance: TreeStorage;
 
-  public static async initInstance(databaseUri: string): Promise<TreeService> {
+  public static async initInstance(databaseUri: string): Promise<TreeStorage> {
     if (this.instance === undefined) {
-      this.instance = new TreeService(databaseUri);
+      this.instance = new TreeStorage(databaseUri);
       await this.instance.connectDb();
       return this.instance;
     } else return this.instance;
   }
-  public static getInstance(): TreeService {
+  public static getInstance(): TreeStorage {
     return this.instance;
   }
 
   databaseUri: string;
   /**
-   * Constructor of the TreeService class
+   * Constructor of the TreeStorage class
    *
    * @param databaseUri - The URI of our database
    */

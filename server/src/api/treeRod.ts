@@ -1,25 +1,26 @@
 import Express, { Request, Response } from 'express';
 import { query, param, validationResult, check, body } from 'express-validator';
-import { calculateNewElo } from './EloService';
-import { Tree } from './Schemas/treeSchema';
-import { Treecognition } from './TreecognitionService';
 
-import { TreeService } from './TreeService';
+import { Tree } from '../Schemas/treeSchema';
+import { calculateNewElo } from '../services/eloLogic';
+import { Treecognition } from '../services/treecognition';
+import { TreeStorage } from '../services/treeStorage';
+
 const router = Express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
-  const trees = await TreeService.getInstance().getAllTrees();
+  const trees = await TreeStorage.getInstance().getAllTrees();
   res.json(trees);
 });
 
 router.get('/random', async (req: Request, res: Response) => {
-  const trees = await TreeService.getInstance().getTwoRandomTrees();
+  const trees = await TreeStorage.getInstance().getTwoRandomTrees();
   res.send(trees);
 });
 
 router.get('/:treeId', async (req: Request, res: Response) => {
   param('treeId').isMongoId();
-  const tree = await TreeService.getInstance().oneTree(req.params.treeId);
+  const tree = await TreeStorage.getInstance().oneTree(req.params.treeId);
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -32,7 +33,7 @@ router.get('/image/:treeId', async (req: Request, res: Response) => {
   if (!validationResult(req).isEmpty()) {
     return res.status(400).json('Invalid treeId');
   }
-  const tree = (await TreeService.getInstance().oneTree(
+  const tree = (await TreeStorage.getInstance().oneTree(
     req.params.treeId
   )) as Tree;
   res.contentType('png');
@@ -57,10 +58,10 @@ router.post('/vote', async (req: Request, res: Response) => {
   const loserId: string = req.query.loserId as string;
   const winnerId: string = req.query.winnerId as string;
 
-  const looserTree: Tree | null = await TreeService.getInstance().oneTree(
+  const looserTree: Tree | null = await TreeStorage.getInstance().oneTree(
     loserId
   );
-  const winnerTree: Tree | null = await TreeService.getInstance().oneTree(
+  const winnerTree: Tree | null = await TreeStorage.getInstance().oneTree(
     winnerId
   );
   if (looserTree == null || winnerTree == null) {
@@ -70,8 +71,8 @@ router.post('/vote', async (req: Request, res: Response) => {
     winnerTree.eloRating,
     looserTree.eloRating
   );
-  TreeService.getInstance().updateScore(winnerId, newEloWinnerTree);
-  TreeService.getInstance().updateScore(loserId, newEloLooserTree);
+  TreeStorage.getInstance().updateScore(winnerId, newEloWinnerTree);
+  TreeStorage.getInstance().updateScore(loserId, newEloLooserTree);
 
   res.send(200);
 });
@@ -104,7 +105,7 @@ router.post(
         })),
       });
     }
-    await TreeService.getInstance().insertTree(tree);
+    await TreeStorage.getInstance().insertTree(tree);
     res.send(200);
   }
 );
