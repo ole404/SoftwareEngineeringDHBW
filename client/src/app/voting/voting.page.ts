@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { IonRouterOutlet } from '@ionic/angular';
 import Tree from '../interfaces/tree';
+import { ApiService } from '../services/api.service';
 
 enum Winner {
   left,
@@ -60,7 +61,7 @@ export class VotingPage implements OnInit {
   wonRight = false;
   lostRight = false;
 
-  constructor(public routerOutlet: IonRouterOutlet) {}
+  constructor(public routerOutlet: IonRouterOutlet, private api: ApiService) {}
 
   ngOnInit() {}
 
@@ -71,6 +72,10 @@ export class VotingPage implements OnInit {
     this.winner = Winner.left;
     // TODO: Api Post here
     this.afterSelect();
+  }
+
+  async vote(winningTree: Tree, loosingTree: Tree): Promise<void> {
+    await this.api.postVote(winningTree.id, loosingTree.id);
   }
 
   // User selected right tree
