@@ -5,7 +5,6 @@
 </ion-header>
 
 <ion-content class="background">
-  <app-leaderboard #leaderboard></app-leaderboard>
   <ion-grid>
     <ion-row>
       <ion-col class="ion-text-center">
@@ -33,20 +32,4 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
-    <ion-fab-button color="secondary">
-      <ion-icon md="caret-back" ios="chevron-back-circle-outline"></ion-icon>
-    </ion-fab-button>
-    <ion-fab-list side="start">
-      <ion-fab-button (click)="openLeaderboard()">
-        <ion-icon name="list"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button routerLink="/map" routerDirection="forward">
-        <ion-icon name="map"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button (click)="takePicture()">
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
-  </ion-fab>
 </ion-content>
