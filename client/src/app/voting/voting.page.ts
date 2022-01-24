@@ -32,38 +32,14 @@ export class VotingPage implements OnInit {
   isWinnerLeft = false;
   isWinnerRight = false;
 
-  // Mock a tree object.
-  // TODO: query this from api
-  treeLeft: Tree = {
-    id: 'abcd',
-    userName: 'Tobias',
-    treeName: 'Peter Lightning',
-    eloRating: 1020,
-    geo: {
-      lat: 42.380098,
-      lon: -71.116629,
-    },
-  };
-
-  // TODO: query this from api
-  treeRight: Tree = {
-    id: 'njaslkd',
-    userName: 'Hans',
-    treeName: 'Hansis Schatz',
-    eloRating: 1201,
-    geo: {
-      lat: 42.380198,
-      lon: -71.116529,
-    },
-  };
-
-  // Won and lost (see note above) bound to tree component
-  wonRight = false;
-  lostRight = false;
+  treeLeft: Tree;
+  treeRight: Tree;
 
   constructor(public routerOutlet: IonRouterOutlet, private api: ApiService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.api.getNextTrees().then(this.resetView);
+  }
 
   // User selected left tree
   onLeft() {
@@ -72,10 +48,6 @@ export class VotingPage implements OnInit {
     this.winner = Winner.left;
     // TODO: Api Post here
     this.afterSelect();
-  }
-
-  async vote(winningTree: Tree, loosingTree: Tree): Promise<void> {
-    await this.api.postVote(winningTree.id, loosingTree.id);
   }
 
   // User selected right tree
@@ -98,15 +70,15 @@ export class VotingPage implements OnInit {
     this.isWinnerLeft = this.winner === Winner.left;
     this.isWinnerRight = this.winner === Winner.right;
 
-    requestMock().then(() => {
-      this.resetView();
-    });
+    const winnerId = this.isWinnerLeft ? this.treeLeft.id : this.treeRight.id;
+    const looserId = this.isWinnerLeft ? this.treeRight.id : this.treeLeft.id;
+
+    this.api.postVote(winnerId, looserId);
+    this.api.getNextTrees().then(this.resetView);
   }
 
   // Reset everyting and query new stuff
-  resetView() {
-    // TODO: update trees from GET Request from 'after Select'
-    // This simulates wait for GET Request
+  resetView(trees: Tree[]) {
     this.fade = true;
 
     const fadeAnimationLength = 300;
@@ -115,8 +87,10 @@ export class VotingPage implements OnInit {
     setTimeout(
       (() => {
         this.winner = undefined;
-        this.isWinnerLeft = this.winner === Winner.left;
-        this.isWinnerRight = this.winner === Winner.right;
+        this.isWinnerLeft = false;
+        this.isWinnerRight = false;
+        this.treeLeft = trees[0];
+        this.treeRight = trees[1];
       }).bind(this),
       fadeAnimationLength
     );

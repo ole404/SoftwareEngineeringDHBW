@@ -14,6 +14,7 @@
     <ion-row>
       <ion-col size="6" size-sm="6">
         <app-voting-tree
+          *ngIf="treeLeft"
           class="tree left"
           [ngClass]="{ 'fade': fade, 'center': isWinnerLeft, 'down': isWinnerRight }"
           [tree]="treeLeft"
@@ -23,6 +24,7 @@
       </ion-col>
       <ion-col size="6" size-sm="6">
         <app-voting-tree
+          *ngIf="treeRight"
           class="tree right"
           [ngClass]="{ 'fade': fade, 'center': isWinnerRight, 'down': isWinnerLeft }"
           [tree]="treeRight"
