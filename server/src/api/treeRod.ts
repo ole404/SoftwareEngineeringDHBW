@@ -9,8 +9,16 @@ import { TreeStorage } from '../services/treeStorage';
 const router = Express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
-  const trees = await TreeStorage.getInstance().getAllTrees();
-  res.json(trees);
+  query('max').isInt().optional();
+  const numberOfTrees: string = req.query.max as string;
+  const max = parseInt(numberOfTrees);
+  if (max == 0 || numberOfTrees == null) {
+    const trees = await TreeStorage.getInstance().getAllTrees();
+    res.json(trees);
+  } else {
+    const trees = await TreeStorage.getInstance().getTopTrees(max);
+    res.json(trees);
+  }
 });
 
 router.get('/random', async (req: Request, res: Response) => {
