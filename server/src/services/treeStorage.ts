@@ -72,7 +72,10 @@ export class TreeStorage {
    * @returns All trees of the database in an array
    */
   async getAllTrees(): Promise<Tree[]> {
-    return await treeModel.find({});
+    return await treeModel.find(
+      {},
+      { userName: true, treeName: true, eloRating: true, geo: true }
+    );
   }
   /**
    * Returns two random trees from the database
