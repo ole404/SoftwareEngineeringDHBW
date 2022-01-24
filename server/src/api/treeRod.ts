@@ -54,7 +54,7 @@ router.get('/image/:treeId', async (req: Request, res: Response) => {
   res.contentType('png');
   const image = Buffer.from(tree.image, 'base64');
 
-  //converting the base64 tree image into an png
+  //converting the base64 tree image into a png
   res.writeHead(200, {
     'Content-Type': 'image/png',
     'Content-Length': image.length,
