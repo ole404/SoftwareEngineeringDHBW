@@ -20,6 +20,8 @@ import { MenuComponent } from './components/menu/menu.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { UploadComponent } from './components/upload/upload.component';
 
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx'; //TODO: remove
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,6 +52,7 @@ import { UploadComponent } from './components/upload/upload.component';
     ApiService,
     GeoService,
     PhotoService,
+    Geolocation //TODO: remove
   ],
   bootstrap: [AppComponent],
 })
