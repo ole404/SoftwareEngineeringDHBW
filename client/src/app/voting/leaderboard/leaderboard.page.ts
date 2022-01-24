@@ -16,7 +16,7 @@ export class LeaderboardPage implements OnInit {
       eloRating: 1243,
       geo: {
         lat: 34.124,
-        long: -12.09,
+        lon: -12.09,
       },
     },
     {
@@ -26,7 +26,7 @@ export class LeaderboardPage implements OnInit {
       eloRating: 123,
       geo: {
         lat: 32.176,
-        long: -12.023,
+        lon: -12.023,
       },
     },
     {
@@ -36,7 +36,7 @@ export class LeaderboardPage implements OnInit {
       eloRating: 1643,
       geo: {
         lat: 35.114,
-        long: -13.19,
+        lon: -13.19,
       },
     },
   ];

@@ -45,7 +45,7 @@ export class VotingPage implements OnInit {
     eloRating: 1020,
     geo: {
       lat: 42.380098,
-      long: -71.116629,
+      lon: -71.116629,
     },
   };
 
@@ -57,7 +57,7 @@ export class VotingPage implements OnInit {
     eloRating: 1201,
     geo: {
       lat: 42.380198,
-      long: -71.116529,
+      lon: -71.116529,
     },
   };
 

@@ -32,7 +32,7 @@ export class MapPage implements OnInit {
 
   addMarkers(map) {
     for (const element of this.treeLocations) {
-      const nMarker = new marker([element.geo.lat, element.geo.long])
+      const nMarker = new marker([element.geo.lat, element.geo.lon])
         .bindPopup(
           '<strong>Hello world!</strong><br />I am ' + element.treeName,
           { maxWidth: 500 }
