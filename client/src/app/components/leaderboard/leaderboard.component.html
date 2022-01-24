@@ -1,3 +1,23 @@
-<p>
-  leaderboard works!
-</p>
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Leaderboard</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismisModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-card *ngFor="let tree of trees" class="card">
+    <img
+      src="https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg"
+      class="card-img"
+    />
+    <ion-card-header>
+      <ion-card-subtitle>From {{tree.userName}}</ion-card-subtitle>
+      <ion-card-title>{{tree.treeName}}</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content> Elo: {{tree.eloRating}} </ion-card-content>
+  </ion-card>
+  <div style="height: 50px"></div>
+</ion-content>
