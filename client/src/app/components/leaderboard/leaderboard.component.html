@@ -8,17 +8,18 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngFor="let tree of trees" class="card">
-    <img
-      src="https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg"
-      class="card-img"
-    />
-    <ion-card-header>
-      <ion-card-subtitle>From {{tree.userName}}</ion-card-subtitle>
-      <ion-card-title>{{tree.treeName}}</ion-card-title>
-    </ion-card-header>
+  <div *ngFor="let tree of trees; let i=index">
+    <ion-card class="card">
+      <img
+        src="https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg"
+        class="card-img"
+      />
+      <ion-card-header>
+        <ion-card-subtitle>From {{tree.userName}}</ion-card-subtitle>
+        <ion-card-title>{{tree.treeName}}</ion-card-title>
+      </ion-card-header>
 
-    <ion-card-content> Elo: {{tree.eloRating}} </ion-card-content>
-  </ion-card>
-  <div style="height: 50px"></div>
+      <ion-card-content> Elo: {{tree.eloRating}} </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

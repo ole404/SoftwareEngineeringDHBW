@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -16,12 +17,20 @@ import { ApiService } from './services/api.service';
 import { GeoService } from './services/geo.service';
 import { PhotoService } from './services/photo.service';
 import { MenuComponent } from './components/menu/menu.component';
+import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
+import { UploadComponent } from './components/upload/upload.component';
 
 @NgModule({
-  declarations: [AppComponent, MenuComponent],
+  declarations: [
+    AppComponent,
+    MenuComponent,
+    LeaderboardComponent,
+    UploadComponent,
+  ],
   entryComponents: [],
   imports: [
     BrowserModule,
+    CommonModule,
     HttpClientModule,
     IonicModule.forRoot(),
     AppRoutingModule,

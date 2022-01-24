@@ -17,6 +17,9 @@ export class MenuComponent implements OnInit {
     const modal = await this.modalController.create({
       component: LeaderboardComponent,
       cssClass: 'app-leaderboard',
+      swipeToClose: true,
+      animated: true,
+      keyboardClose: true,
     });
     return await modal.present();
   }
@@ -25,6 +28,7 @@ export class MenuComponent implements OnInit {
     const modal = await this.modalController.create({
       component: UploadComponent,
       cssClass: 'app-upload',
+      swipeToClose: true,
     });
     return await modal.present();
   }
