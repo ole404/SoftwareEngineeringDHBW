@@ -4,7 +4,7 @@
   (click)="openPreview=true"
 >
   <img
-    src="https://avatars.dicebear.com/api/micah/lul{{tree.id}}.svg"
+    src="{{host}}/trees/image/{{tree.id}}"
     alt="Image of a tree"
     height="250px"
     width="100%"
@@ -39,7 +39,7 @@
     </ion-header>
     <ion-content fullscreen>
       <img
-        src="https://avatars.dicebear.com/api/micah/lul{{tree.id}}.svg"
+        src="{{host}}/trees/image/{{tree.id}}"
         alt="Image of a tree"
         height="100%"
         width="100%"
