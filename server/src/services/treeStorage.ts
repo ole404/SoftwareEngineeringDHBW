@@ -4,6 +4,12 @@ import { Tree, treeModel } from '../Schemas/treeSchema';
 export class TreeStorage {
   private static instance: TreeStorage;
 
+  /**
+   * Singleton for the Database instance
+   *
+   * @param databaseUri - The URI of our database
+   * @returns An instance of the Database
+   */
   public static async initInstance(databaseUri: string): Promise<TreeStorage> {
     if (this.instance === undefined) {
       this.instance = new TreeStorage(databaseUri);
@@ -74,6 +80,7 @@ export class TreeStorage {
   async getAllTrees(): Promise<Tree[]> {
     return await treeModel.find(
       {},
+      //if all trees are requested the tree images are omitted to reduce send information
       { userName: true, treeName: true, eloRating: true, geo: true }
     );
   }
