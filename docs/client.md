@@ -26,5 +26,14 @@ If the now user revisits the app, the username is found in the local storage and
 
 ### Map
 
+![map page](./client/map.png "Map Page")
+
 If the user decides to click on the map icon, he is shown an OpenStreetMap, that is provided using the JavaScript-Library Leaflet and it's map-tiles. The map has different scrolling levels and enables the user to zoom in or out on the map. 
-This way the user can explore the locations of trees, saved in the database, globally. The trees themselves are represented by markers placed at different coordinates and consequently different regions of the map.
+
+This way, the user can explore the locations of trees, saved in the database, globally. The trees themselves are represented by markers placed at different coordinates and consequently different regions of the map.
+
+
+
+
+
+
