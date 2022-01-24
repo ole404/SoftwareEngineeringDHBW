@@ -4,7 +4,7 @@
   "description": "Huch ein backend",
   "main": "dist/main.js",
   "scripts": {
-    "start:dev": "npx nodemon main.ts",
+    "start:dev": "npx nodemon src/main.ts",
     "start:db": "docker run --rm -d -p 27017:27017 --name tannder-dev-db -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest",
     "build": "tsc -b",
     "start:prod": "node dist/main.js",

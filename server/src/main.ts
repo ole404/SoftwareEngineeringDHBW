@@ -30,7 +30,10 @@ TreeService.initInstance(process.env.DB_URI as string);
 
 app.use('/trees', trees);
 
-const staticContent = path.join(__dirname, isProd ? './www' : '../client/www');
+const staticContent = path.join(
+  __dirname,
+  isProd ? './www' : '../../client/www'
+);
 app.use(express.static(staticContent));
 app.get('*', (req, res) => {
   res.sendFile(path.join(staticContent, '/index.html'));
