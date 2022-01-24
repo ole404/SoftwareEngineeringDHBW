@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import Tree from '../../interfaces/tree';
 
 const sleep = (ms) => {
@@ -49,9 +50,13 @@ const mockTrees = async () => {
 export class LeaderboardComponent implements OnInit {
   trees: Tree[];
 
-  constructor() {}
+  constructor(public modalController: ModalController) {}
 
   ngOnInit() {
     mockTrees().then((trees) => (this.trees = trees));
+  }
+
+  dismiss() {
+    this.modalController.dismiss();
   }
 }

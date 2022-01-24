@@ -15,9 +15,10 @@ import { environment } from '../environments/environment';
 import { ApiService } from './services/api.service';
 import { GeoService } from './services/geo.service';
 import { PhotoService } from './services/photo.service';
+import { MenuComponent } from './components/menu/menu.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, MenuComponent],
   entryComponents: [],
   imports: [
     BrowserModule,

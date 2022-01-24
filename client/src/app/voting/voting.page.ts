@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { IonRouterOutlet } from '@ionic/angular';
-import { UploadService } from '../services/upload.service';
 import Tree from '../interfaces/tree';
 
 enum Winner {
@@ -61,20 +60,9 @@ export class VotingPage implements OnInit {
   wonRight = false;
   lostRight = false;
 
-  constructor(
-    public routerOutlet: IonRouterOutlet,
-    public uploadService: UploadService
-  ) {}
+  constructor(public routerOutlet: IonRouterOutlet) {}
 
   ngOnInit() {}
-
-  openLeaderboard() {
-    this.leaderboard.openModal = true;
-  }
-
-  startUploadService() {
-    this.uploadService.takePicture();
-  }
 
   // User selected left tree
   onLeft() {

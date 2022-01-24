@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { PhotoService } from 'src/app/services/photo.service';
 
 @Component({
   selector: 'app-upload',
@@ -6,9 +8,20 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./upload.component.scss'],
 })
 export class UploadComponent implements OnInit {
+  constructor(
+    public modalController: ModalController,
+    public photoService: PhotoService
+  ) {}
 
-  constructor() { }
+  async ngOnInit() {
+    this.photoService.takePicture().catch(
+      ((err) => {
+        this.dismiss();
+      }).bind(this)
+    );
+  }
 
-  ngOnInit() {}
-
+  dismiss() {
+    this.modalController.dismiss();
+  }
 }

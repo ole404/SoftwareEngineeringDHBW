@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
+import { UploadComponent } from '../upload/upload.component';
 
 @Component({
   selector: 'app-menu',
@@ -6,9 +9,23 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./menu.component.scss'],
 })
 export class MenuComponent implements OnInit {
-
-  constructor() { }
+  constructor(public modalController: ModalController) {}
 
   ngOnInit() {}
 
+  async openLeaderboard() {
+    const modal = await this.modalController.create({
+      component: LeaderboardComponent,
+      cssClass: 'app-leaderboard',
+    });
+    return await modal.present();
+  }
+
+  async openUpload() {
+    const modal = await this.modalController.create({
+      component: UploadComponent,
+      cssClass: 'app-upload',
+    });
+    return await modal.present();
+  }
 }
