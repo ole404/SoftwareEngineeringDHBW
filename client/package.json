@@ -5,8 +5,8 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "ionic serve",
+    "build": "ionic build",
     "test": "ng test",
     "lint": "ng lint",
     "format": "ng lint --fix",
@@ -20,6 +20,7 @@
     "@angular/platform-browser": "~13.0.0",
     "@angular/platform-browser-dynamic": "~13.0.0",
     "@angular/router": "~13.0.0",
+    "@angular/service-worker": "~13.0.0",
     "@awesome-cordova-plugins/geolocation": "^5.37.3",
     "@capacitor/app": "1.0.7",
     "@capacitor/camera": "^1.2.2",

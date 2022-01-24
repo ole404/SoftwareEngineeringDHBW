@@ -1,4 +1,4 @@
-import { ImageAnnotatorClient, v1 } from '@google-cloud/vision';
+import { ImageAnnotatorClient } from '@google-cloud/vision';
 
 export class Treecognition {
   client: ImageAnnotatorClient;
@@ -7,7 +7,7 @@ export class Treecognition {
    * @param keyFilePath The path to the JSON key file.
    */
   constructor(keyFilePath: string) {
-    this.client = new ImageAnnotatorClient();
+    this.client = new ImageAnnotatorClient({ keyFile: keyFilePath });
   }
   /**
    * To use the function with image Buffers alternativly to base64 strings.

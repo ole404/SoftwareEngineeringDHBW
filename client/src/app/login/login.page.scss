@@ -7,6 +7,10 @@
   background: rgba(255, 255, 255, 0.8);
 }
 
+.input-item {
+  --background: transparent;
+}
+
 @media (prefers-color-scheme: dark) {
   .card {
     background: rgba(0, 0, 0, 0.6);

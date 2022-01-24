@@ -40,6 +40,7 @@ export class UploadPage implements OnInit {
     const username = await this.storage.get('name');
     const treename = await this.treeNameInput;
     if (!treename) return false;
+    if (!this.lat || !this.lon) return false;
     axios
       .post('/trees/upload', {
         userName: username,

@@ -6,19 +6,24 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: admin
     volumes:
       - type: volume
-        source: MONGO_DATA
+        source: TANNDER_DATA
         target: /data/db
   server:
-    build: .
+    build:
+      context: ./..
+      dockerfile: ./docker/Dockerfile
+      args:
+        - PORT=3000
     depends_on:
       - mongodb
     environment:
       DB_URI: mongodb://admin:admin@mongodb:27017/
       GOOGLE_APPLICATION_CREDENTIALS: /app/gcloud.json
-      PORT: 8080
+      PORT: 3000
+      NODE_ENV: production
     ports:
-      - 80:8080
+      - 80:3000
 
 volumes:
-  MONGO_DATA:
-    name: MONGO_DATA
+  TANNDER_DATA:
+    name: TANNDER_DATA
