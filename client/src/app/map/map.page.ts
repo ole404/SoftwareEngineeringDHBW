@@ -3,6 +3,7 @@ import { Platform } from '@ionic/angular';
 import { Map, tileLayer, marker, icon } from 'leaflet';
 import { PhotoService } from '../services/photo.service';
 import { ApiService } from '../services/api.service';
+import { GeoService } from '../services/geo.service';
 
 import { Tree } from '../interfaces/index';
 
@@ -17,7 +18,8 @@ export class MapPage implements OnInit {
   constructor(
     public plt: Platform,
     public photoService: PhotoService,
-    private api: ApiService
+    private api: ApiService,
+    private geoService: GeoService
   ) {}
 
   ngOnInit() {}
@@ -47,8 +49,9 @@ export class MapPage implements OnInit {
     console.log(this.treeLocations);
   }
 
-  private initMap() {
-    const map = new Map('map').setView([42.380098, -71.116629], 23); //TODO: maybe adapt zoom and starting location to trees
+  private async initMap() {
+    const { coords } = await this.geoService.getCurrentPosition();
+    const map = new Map('map').setView([coords.latitude, coords.longitude], 23); //TODO: maybe adapt zoom and starting location to trees
 
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
