@@ -38,7 +38,7 @@ export class VotingPage implements OnInit {
   constructor(public routerOutlet: IonRouterOutlet, private api: ApiService) {}
 
   ngOnInit() {
-    this.api.getNextTrees().then(this.resetView);
+    this.api.getNextTrees().then(this.resetView.bind(this));
   }
 
   // User selected left tree
@@ -79,6 +79,7 @@ export class VotingPage implements OnInit {
 
   // Reset everyting and query new stuff
   resetView(trees: Tree[]) {
+    if (!trees.length) return 0;
     this.fade = true;
 
     const fadeAnimationLength = 300;
