@@ -85,7 +85,8 @@ export class TreeStorage {
    */
   async getTwoRandomTrees() {
     const queriedTrees = await treeModel.find({ $sample: { size: 2 } });
-    if (queriedTrees.length !== 2) throw Error('meeeep');
+    console.log(queriedTrees);
+    if (queriedTrees.length !== 2) throw Error('meeeep'); // TODO: handle this
     const treeLeft: Tree = {
       id: queriedTrees[0]._id,
       userName: queriedTrees[0].userName,
@@ -110,7 +111,7 @@ export class TreeStorage {
    */
   async oneTree(treeId: string) {
     const queriedTree = await treeModel.findById(treeId);
-    if (!queriedTree) throw Error('Meeeep');
+    if (!queriedTree) throw Error('Meeeep'); // TODO: handle this
     const tree: Tree = {
       id: queriedTree._id,
       userName: queriedTree.userName,

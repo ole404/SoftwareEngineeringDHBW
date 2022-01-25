@@ -74,12 +74,12 @@ export class VotingPage implements OnInit {
     const looserId = this.isWinnerLeft ? this.treeRight.id : this.treeLeft.id;
 
     this.api.postVote(winnerId, looserId);
-    this.api.getNextTrees().then(this.resetView);
+    this.api.getNextTrees().then(this.resetView.bind(this));
   }
 
   // Reset everyting and query new stuff
-  resetView(trees: Tree[]) {
-    if (!trees.length) return 0;
+  resetView({ treeLeft, treeRight }: { treeLeft: Tree; treeRight: Tree }) {
+    if (!treeLeft || !treeRight) return 0;
     this.fade = true;
 
     const fadeAnimationLength = 300;
@@ -90,8 +90,8 @@ export class VotingPage implements OnInit {
         this.winner = undefined;
         this.isWinnerLeft = false;
         this.isWinnerRight = false;
-        this.treeLeft = trees[0];
-        this.treeRight = trees[1];
+        this.treeLeft = treeLeft;
+        this.treeRight = treeRight;
       }).bind(this),
       fadeAnimationLength
     );

@@ -22,8 +22,13 @@ export class ApiService {
   getNextTrees() {
     const endpoint = `${environment.backendApi}/trees/random`;
     const options = { observe: 'body' as const };
-    return new Promise<Tree[]>((res) =>
-      this.http.get(endpoint, options).subscribe((body: Tree[]) => res(body))
+    return new Promise<{ treeLeft: Tree; treeRight: Tree }>((res) =>
+      this.http
+        .get(endpoint, options)
+        .subscribe((body: { treeLeft: Tree; treeRight: Tree }) => {
+          console.log(body);
+          res(body);
+        })
     );
   }
 
