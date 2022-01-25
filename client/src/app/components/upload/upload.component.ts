@@ -3,7 +3,9 @@ import { ModalController } from '@ionic/angular';
 import { PhotoService } from 'src/app/services/photo.service';
 import { Storage } from '@ionic/storage-angular';
 import axios from 'axios';
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx'; //TODO: replace with Geoservice
+import { GeoService } from '../../services/geo.service';
+import { ApiService } from 'src/app/services/api.service';
+import { CameraResultType } from '@capacitor/camera';
 
 @Component({
   selector: 'app-upload',
@@ -20,46 +22,38 @@ export class UploadComponent implements OnInit {
     public modalController: ModalController,
     public photoService: PhotoService,
     private storage: Storage,
-    private geolocation: Geolocation
+    private geoService: GeoService,
+    private apiServer: ApiService
   ) {}
 
   async ngOnInit() {
-    this.photoService.takePicture()
-    .then((image) => {
-      console.log(image);
-      this.base64image = image.base64String;
-    })
-    .catch(
-      ((err) => {
-        this.dismiss();
-      }).bind(this)
-    );
-    const { coords } = await this.geolocation.getCurrentPosition(); //TODO: replace with Geoservuce
+    this.photoService
+      .takePicture()
+      .then((image) => {
+        console.log(image);
+        this.base64image = image.base64String;
+      })
+      .catch(((err) => this.dismiss()).bind(this));
+    const { coords } = await this.geoService.getCurrentPosition();
     this.lat = coords.latitude;
     this.lon = coords.longitude;
   }
 
   async uploadItem() {
-    const username = await this.storage.get('name');
-    const treename = await this.treeNameInput;
-    if (!treename) return false;
-    axios //todo: replace with api service
-      .post('/trees/upload', {
-        userName: username,
-        treeName: treename,
+    const userName = await this.storage.get('name');
+    const treeName = this.treeNameInput;
+    if (!treeName) return false;
+    this.apiServer
+      .postUpload({
+        userName,
+        treeName,
         geo: {
           lat: this.lat,
           lon: this.lon,
         },
-        image: this.base64image,
+        image: this.base64image as CameraResultType.Base64,
       })
-      .then((response) => {
-        console.log(response);
-        this.dismiss()
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .subscribe(this.dismiss.bind(this));
   }
 
   dismiss() {

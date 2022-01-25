@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -21,8 +22,6 @@ import { MenuComponent } from './components/menu/menu.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import { UploadComponent } from './components/upload/upload.component';
 
-import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx'; //TODO: remove
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,6 +33,7 @@ import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx'; //TODO: 
   imports: [
     BrowserModule,
     CommonModule,
+    FormsModule,
     HttpClientModule,
     IonicModule.forRoot(),
     AppRoutingModule,
@@ -54,7 +54,7 @@ import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx'; //TODO: 
     ApiService,
     GeoService,
     PhotoService,
-    Geolocation //TODO: remove
+    Geolocation,
   ],
   bootstrap: [AppComponent],
 })
