@@ -1,49 +1,38 @@
 import mongoose from 'mongoose';
-import { Tree, treeModel } from '../Schemas/treeSchema';
+import { treeModel } from '../Schemas/treeSchema';
+import { NewTree, Tree } from '../api/interfaces';
 
 export class TreeStorage {
   private static instance: TreeStorage;
+  databaseUri: string | undefined;
+  connection: typeof mongoose | undefined;
 
   /**
    * Singleton for the Database instance
    *
-   * @param databaseUri - The URI of our database
    * @returns An instance of the Database
    */
-  public static async initInstance(databaseUri: string): Promise<TreeStorage> {
-    if (this.instance === undefined) {
-      this.instance = new TreeStorage(databaseUri);
-      await this.instance.connectDb();
-      return this.instance;
-    } else return this.instance;
-  }
   public static getInstance(): TreeStorage {
+    if (this.instance === undefined) this.instance = new TreeStorage();
     return this.instance;
-  }
-
-  databaseUri: string;
-  /**
-   * Constructor of the TreeStorage class
-   *
-   * @param databaseUri - The URI of our database
-   */
-  constructor(databaseUri: string) {
-    this.databaseUri = databaseUri;
   }
   /**
    * Connects to our MongoDB database
+   * @param databaseUri - The URI of our database
    */
-  async connectDb() {
-    await mongoose.connect(this.databaseUri);
+  static async connectDb(databaseUri: string) {
+    this.instance.connection = await mongoose.connect(databaseUri);
   }
   /**
    * Inserts a tree object into the database
    *
    * @param tree - The tree id to be added
    */
-  async insertTree(tree: Tree) {
-    tree.eloRating = 1000;
-    await treeModel.create(tree);
+  async insertTree(tree: NewTree) {
+    await treeModel.create({
+      ...tree,
+      eloRating: 1000,
+    });
   }
   /**
    * Deletes a tree from the database

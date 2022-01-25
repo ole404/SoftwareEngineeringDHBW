@@ -1,22 +1,7 @@
-import mongoose from 'mongoose';
-const { Schema, model } = mongoose;
-/**
- * Interface for our GeoInformation
- */
-interface Geo {
-  lat: number;
-  lon: number;
-}
-/**
- * Interface for our trees
- */
-export interface Tree {
-  userName: string;
-  treeName: string;
-  eloRating: number;
-  geo: Geo;
-  image: string;
-}
+import { Schema, model } from 'mongoose';
+
+import { Tree } from '../api/interfaces';
+
 /**
  * Mongoose schema for the MongoDB
  */
@@ -27,5 +12,14 @@ export const treeSchema = new Schema<Tree>({
   geo: { lat: Number, lon: Number },
   image: String,
 });
+
+// Duplicate the ID field.
+treeSchema.virtual('id').get(function () {
+  return this._id.toHexString();
+});
+
+// Ensure virtual fields are serialised.
+treeSchema.set('toJSON', { virtuals: true });
+
 //Creating a model from the tree schema
 export const treeModel = model<Tree>('Tree', treeSchema);
