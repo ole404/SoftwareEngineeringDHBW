@@ -12,20 +12,23 @@ const router = Express.Router();
 const storage = TreeStorage.getInstance();
 
 //get api either getting all trees or as many trees as the query parameter specifies
-router.get('/many', async (req: Request, res: Response) => {
-  query('max').isInt().optional();
-  const numberOfTrees = req.query.max as string;
-  const max = parseInt(numberOfTrees);
-  //if the query parameter is empty, all trees are returned
-  if (max == 0 || numberOfTrees == null) {
-    const trees = await storage.getAllTrees();
-    res.json(trees);
-    // else only the specified amount of trees are returned
-  } else {
-    const trees = await storage.getTopTrees(max);
-    res.json(trees);
+router.get(
+  '/many',
+  query('max').isInt().optional(),
+  async (req: Request, res: Response) => {
+    const numberOfTrees = req.query.max as string;
+    const max = parseInt(numberOfTrees);
+    //if the query parameter is empty, all trees are returned
+    if (max == 0 || numberOfTrees == null) {
+      const trees = await storage.getAllTrees();
+      res.json(trees);
+      // else only the specified amount of trees are returned
+    } else {
+      const trees = await storage.getTopTrees(max);
+      res.json(trees);
+    }
   }
-});
+);
 
 //get api returning two randwom trees
 router.get('/random', async (req: Request, res: Response) => {
@@ -34,34 +37,38 @@ router.get('/random', async (req: Request, res: Response) => {
 });
 
 //get api only returning the image of the tree specified by the id
-router.get('/image/:treeId', async (req: Request, res: Response) => {
-  console.log(`Params looks like ${req.params.treeId}`);
-  param('treeId').isMongoId();
-  console.log('was successful');
-  if (!validationResult(req).isEmpty()) {
-    return res.status(400).json('Invalid treeId');
-  }
-  console.log('I go so far');
-  const tree = (await storage.oneTree(req.params.treeId)) as Tree;
-  console.log('And got so far now!');
-  res.contentType('jpeg');
-  const image = Buffer.from(tree.image, 'base64');
+router.get(
+  '/image/:treeId',
+  param('treeId').isMongoId(),
+  async (req: Request, res: Response) => {
+    console.log(`Params looks like ${req.params.treeId}`);
+    console.log('was successful');
+    if (!validationResult(req).isEmpty()) {
+      return res.status(400).json('Invalid treeId');
+    }
+    console.log('I go so far');
+    const tree = (await storage.oneTree(req.params.treeId)) as Tree;
+    console.log('And got so far now!');
+    res.contentType('jpeg');
+    const image = Buffer.from(tree.image, 'base64');
 
-  //converting the base64 tree image into a png
-  res.writeHead(200, { 'Content-Length': image.length });
-  res.end(image);
-});
+    //converting the base64 tree image into a png
+    res.writeHead(200, { 'Content-Length': image.length });
+    res.end(image);
+  }
+);
 
 //get api returning the tree specified by its id
-router.get('/single/:treeId', async (req: Request, res: Response) => {
-  param('treeId').isMongoId();
-  const tree = await storage.oneTree(req.params.treeId);
-  const errors = validationResult(req);
-  if (!errors.isEmpty())
-    return res.status(400).json({ errors: errors.array() });
-
-  res.json(tree);
-});
+router.get(
+  '/single/:treeId',
+  param('treeId').isMongoId(),
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json('Invalid treeId');
+    const tree = await storage.oneTree(req.params.treeId);
+    res.json(tree);
+  }
+);
 
 //post api changing the elo scores of the trees specified
 router.post('/vote', async (req: Request, res: Response) => {
