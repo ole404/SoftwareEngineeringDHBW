@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpParamsOptions,
-  HttpResponse,
-} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import { environment } from './../../environments/environment';
 
@@ -15,42 +11,46 @@ import { NewTree, Tree } from '../interfaces/index';
 export class ApiService {
   constructor(private http: HttpClient) {}
 
-  async getTrees(max: number) {
-    const endpoint = `${environment.backendApi}/trees`;
+  getTrees(max: number) {
+    const endpoint = `${environment.backendApi}/trees/many`;
     const options = { observe: 'body' as const, params: { max } };
-    return await new Promise<Tree[]>((res) =>
+    return new Promise<Tree[]>((res) =>
       this.http.get(endpoint, options).subscribe((body: Tree[]) => res(body))
     );
   }
 
-  async getNextTrees() {
+  getNextTrees() {
     const endpoint = `${environment.backendApi}/trees/random`;
     const options = { observe: 'body' as const };
-    return await new Promise<Tree[]>((res) =>
+    return new Promise<Tree[]>((res) =>
       this.http.get(endpoint, options).subscribe((body: Tree[]) => res(body))
     );
   }
 
-  async getTree(id: string) {
-    const endpoint = `${environment.backendApi}/trees/${id}`;
+  getTree(id: string) {
+    const endpoint = `${environment.backendApi}/trees/single/${id}`;
     const options = { observe: 'body' as const };
-    return await new Promise<Tree>((res) =>
+    return new Promise<Tree>((res) =>
       this.http.get(endpoint, options).subscribe((body: Tree) => res(body))
     );
   }
 
-  async postVote(winnerId: string, looserId: string) {
+  postVote(winnerId: string, looserId: string) {
     const endpoint = `${environment.backendApi}/trees/vote`;
     const options = {
       observe: 'response' as const,
+      responseType: 'text' as const,
       params: { winnerId, looserId },
     };
-    return await this.http.post(endpoint, options);
+    return this.http.post(endpoint, options).pipe();
   }
 
-  async postUpload(newTree: NewTree) {
+  postUpload(newTree: NewTree) {
     const endpoint = `${environment.backendApi}/trees/upload`;
-    const options = { observe: 'response' as const };
-    return await this.http.post<NewTree>(endpoint, newTree, options);
+    const options = {
+      observe: 'response' as const,
+      responseType: 'text' as const,
+    };
+    return this.http.post(endpoint, newTree, options).pipe();
   }
 }
