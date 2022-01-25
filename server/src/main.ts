@@ -4,7 +4,6 @@ import http from 'http';
 import cors from 'cors';
 import trees from './api/treeRod';
 import { TreeStorage } from './services/treeStorage';
-import bodyParser from 'body-parser';
 import path from 'path';
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -18,9 +17,6 @@ dotenv.config();
 
 // extend maximum body limit
 app.use(express.json({ limit: '16mb' }));
-app.use(express.urlencoded({ limit: '16mb' }));
-//use body-parser middleware
-app.use(bodyParser.json());
 
 if (!isProd) app.use(cors());
 

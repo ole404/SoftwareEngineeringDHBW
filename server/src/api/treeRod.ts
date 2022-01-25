@@ -119,7 +119,7 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
-        errors: errors.array().map((val: validationResult) => ({
+        errors: errors.array().map((val) => ({
           msg: val.msg,
           location: val.location,
           param: val.param,
