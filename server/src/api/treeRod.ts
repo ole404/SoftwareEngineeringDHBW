@@ -15,11 +15,10 @@ const storage = TreeStorage.getInstance();
 router.get(
   '/many',
   query('max').isInt().optional(),
-  async (req: Request, res: Response) => {
-    const numberOfTrees = req.query.max as string;
-    const max = parseInt(numberOfTrees);
+  async (req: Request, res: Response<Tree[]>) => {
+    const max = parseInt(req.query.max as string) || 0;
     //if the query parameter is empty, all trees are returned
-    if (max == 0 || numberOfTrees == null) {
+    if (max === 0) {
       const trees = await storage.getAllTrees();
       res.json(trees);
       // else only the specified amount of trees are returned
@@ -31,30 +30,27 @@ router.get(
 );
 
 //get api returning two randwom trees
-router.get('/random', async (req: Request, res: Response) => {
-  const trees = await storage.getTwoRandomTrees();
-  res.json(trees);
-});
+router.get(
+  '/random',
+  async (req: Request, res: Response<{ treeLeft: Tree; treeRight: Tree }>) => {
+    const trees = await storage.getTwoRandomTrees();
+    res.json(trees);
+  }
+);
 
 //get api only returning the image of the tree specified by the id
 router.get(
   '/image/:treeId',
   param('treeId').isMongoId(),
-  async (req: Request, res: Response) => {
-    console.log(`Params looks like ${req.params.treeId}`);
-    console.log('was successful');
-    if (!validationResult(req).isEmpty()) {
-      return res.status(400).json('Invalid treeId');
-    }
-    console.log('I go so far');
-    const tree = (await storage.oneTree(req.params.treeId)) as Tree;
-    console.log('And got so far now!');
-    res.contentType('jpeg');
-    const image = Buffer.from(tree.image, 'base64');
+  async (req: Request, res: Response<Buffer>) => {
+    if (!validationResult(req).isEmpty()) return res.sendStatus(400);
+    const image = await storage.oneImage(req.params.treeId);
+    const buffer = Buffer.from(image, 'base64');
 
     //converting the base64 tree image into a png
-    res.writeHead(200, { 'Content-Length': image.length });
-    res.end(image);
+    res.contentType('jpeg');
+    res.writeHead(200, { 'Content-Length': buffer.length });
+    res.end(buffer);
   }
 );
 
@@ -62,9 +58,9 @@ router.get(
 router.get(
   '/single/:treeId',
   param('treeId').isMongoId(),
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response<Tree>) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json('Invalid treeId');
+    if (!errors.isEmpty()) return res.sendStatus(400);
     const tree = await storage.oneTree(req.params.treeId);
     res.json(tree);
   }
@@ -76,9 +72,8 @@ router.post('/vote', async (req: Request, res: Response) => {
   query('winnerId').isMongoId();
   const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
+  if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  }
 
   const loserId = req.query.loserId as string;
   const winnerId = req.query.winnerId as string;
@@ -86,9 +81,6 @@ router.post('/vote', async (req: Request, res: Response) => {
   //getting the specified trees info from the database
   const looserTree = await storage.oneTree(loserId);
   const winnerTree = await storage.oneTree(winnerId);
-  if (looserTree == null || winnerTree == null) {
-    return res.sendStatus(400).json({ errors: [{ msg: 'Tree not found' }] });
-  }
   //calculating the new elo score
   const { newEloWinnerTree, newEloLooserTree } = calculateNewElo(
     winnerTree.eloRating,
@@ -121,7 +113,7 @@ router.post(
   async (req: Request, res: Response) => {
     const tree = req.body as NewTree;
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty())
       return res.sendStatus(400).json({
         errors: errors.array().map((val) => ({
           msg: val.msg,
@@ -129,7 +121,7 @@ router.post(
           param: val.param,
         })),
       });
-    }
+
     await storage.insertTree(tree);
     res.sendStatus(200);
   }

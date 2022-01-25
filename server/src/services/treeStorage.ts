@@ -66,11 +66,16 @@ export class TreeStorage {
    *
    * @returns All trees of the database in an array
    */
-  async getAllTrees(): Promise<Tree[]> {
-    return await treeModel.find(
-      {},
-      //if all trees are requested the tree images are omitted to reduce send information
-      { userName: true, treeName: true, eloRating: true, geo: true }
+  async getAllTrees() {
+    return (await treeModel.find({})).map(
+      (o) =>
+        ({
+          id: o._id,
+          treeName: o.treeName,
+          userName: o.userName,
+          eloRating: o.eloRating,
+          geo: o.geo,
+        } as Tree)
     );
   }
   /**
@@ -78,12 +83,24 @@ export class TreeStorage {
    *
    * @returns Two random trees from the database
    */
-  async getTwoRandomTrees(): Promise<{
-    tree1: Tree | null;
-    tree2: Tree | null;
-  }> {
-    const trees = await treeModel.find({ $sample: { size: 2 } });
-    return { tree1: trees[0], tree2: trees[1] };
+  async getTwoRandomTrees() {
+    const queriedTrees = await treeModel.find({ $sample: { size: 2 } });
+    if (queriedTrees.length !== 2) throw Error('meeeep');
+    const treeLeft: Tree = {
+      id: queriedTrees[0]._id,
+      userName: queriedTrees[0].userName,
+      treeName: queriedTrees[0].treeName,
+      eloRating: queriedTrees[0].eloRating,
+      geo: queriedTrees[0].geo,
+    };
+    const treeRight: Tree = {
+      id: queriedTrees[1]._id,
+      userName: queriedTrees[1].userName,
+      treeName: queriedTrees[1].treeName,
+      eloRating: queriedTrees[1].eloRating,
+      geo: queriedTrees[1].geo,
+    };
+    return { treeLeft, treeRight };
   }
   /**
    * Returns a specific single tree from the database
@@ -91,8 +108,28 @@ export class TreeStorage {
    * @param treeId - The id of the tree to be return from the database
    * @returns A tree object
    */
-  async oneTree(treeId: string): Promise<Tree | null> {
-    return await treeModel.findById(treeId);
+  async oneTree(treeId: string) {
+    const queriedTree = await treeModel.findById(treeId);
+    if (!queriedTree) throw Error('Meeeep');
+    const tree: Tree = {
+      id: queriedTree._id,
+      userName: queriedTree.userName,
+      treeName: queriedTree.treeName,
+      eloRating: queriedTree.eloRating,
+      geo: queriedTree.geo,
+    };
+    return tree;
+  }
+  /**
+   * Returns the image from a specific single tree from the database
+   *
+   * @param treeId - The id of the tree to be return from the database
+   * @returns A tree object
+   */
+  async oneImage(treeId: string) {
+    const queriedTree = await treeModel.findById(treeId);
+    if (!queriedTree) throw Error('Meeeep');
+    return queriedTree.image;
   }
   /**
    * Returns the trees with the highest ELO-Ratings
@@ -100,11 +137,20 @@ export class TreeStorage {
    * @param numberOfTrees - The number of trees to be returned
    * @returns Ten tree objects as an array
    */
-  async getTopTrees(numberOfTrees: number): Promise<Tree[]> {
+  async getTopTrees(numberOfTrees: number) {
     const topTrees = await treeModel
       .find()
       .sort('-eloRating')
       .limit(numberOfTrees);
-    return topTrees;
+    return topTrees.map(
+      (o) =>
+        ({
+          id: o._id,
+          treeName: o.treeName,
+          userName: o.userName,
+          eloRating: o.eloRating,
+          geo: o.geo,
+        } as Tree)
+    );
   }
 }
