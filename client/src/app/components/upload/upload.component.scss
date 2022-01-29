@@ -1,5 +1,6 @@
 .preview {
   height: calc(100vh - 300px);
+  max-height: 350px;
   width: 100%;
   object-fit: cover;
 }
