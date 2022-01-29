@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { IonRouterOutlet } from '@ionic/angular';
+import { AlertController, IonRouterOutlet } from '@ionic/angular';
 import Tree from '../interfaces/tree';
 import { ApiService } from '../services/api.service';
 
@@ -17,6 +17,8 @@ const requestMock = async () => {
   return 0;
 };
 
+const fadeAnimationLength = 300;
+const transformAnimationLength = 500;
 @Component({
   selector: 'app-voting',
   templateUrl: './voting.page.html',
@@ -25,84 +27,147 @@ const requestMock = async () => {
 export class VotingPage implements OnInit {
   @ViewChild('leaderboard') leaderboard;
 
-  // Used for click validation, so the user can't click multiple times
-  clickable = true;
-  fade = false;
+  fade = true; // Sets opacity of cards to 0
   winner: Winner;
   isWinnerLeft = false;
   isWinnerRight = false;
 
   treeLeft: Tree;
   treeRight: Tree;
+  loadingTrees = true;
+  errorMsg = '';
+  // Used for click validation, so the user can't click multiple times
+  clickable = false;
+  animate = false;
 
-  constructor(public routerOutlet: IonRouterOutlet, private api: ApiService) {}
+  constructor(
+    public routerOutlet: IonRouterOutlet,
+    private api: ApiService,
+    public alertController: AlertController
+  ) {}
 
   ngOnInit() {
-    this.api.getNextTrees().then(this.resetView.bind(this));
+    this.fetch();
   }
 
+  reset() {
+    this.treeLeft = undefined;
+    this.treeRight = undefined;
+    this.loadingTrees = true;
+    this.errorMsg = '';
+    this.clickable = false;
+    this.fade = true;
+    this.isWinnerLeft = false;
+    this.isWinnerRight = false;
+    this.winner = undefined;
+  }
+
+  async fetch() {
+    await sleep(
+      this.animate ? fadeAnimationLength + transformAnimationLength : 0
+    );
+    this.reset();
+    this.api.getNextTrees().subscribe(
+      (body) => {
+        this.treeLeft = body.treeLeft;
+        this.treeRight = body.treeRight;
+        this.loadingTrees = false;
+        this.inAnimation();
+      },
+      (errorStatus: number) => {
+        this.loadingTrees = false;
+        console.log(errorStatus);
+        if (errorStatus === 404) {
+          this.errorMsg =
+            'The database is empty! Please upload images first (the plus button in the bottom left menu)';
+        } else {
+          this.errorMsg = this.api.getErrorMsg(errorStatus);
+        }
+        this.errorAlert();
+      }
+    );
+  }
   // User selected left tree
   onLeft() {
-    if (!this.verify()) return;
-    this.clickable = false;
-    this.winner = Winner.left;
-    // TODO: Api Post here
-    this.afterSelect();
+    this.vote(Winner.left);
   }
-
   // User selected right tree
   onRight() {
+    this.vote(Winner.right);
+  }
+
+  vote(winner: Winner) {
     if (!this.verify()) return;
     this.clickable = false;
-    this.winner = Winner.right;
-    // TODO: Api Post here
-    this.afterSelect();
+    this.winner = winner;
+
+    const winnerId =
+      this.winner === Winner.left ? this.treeLeft.id : this.treeRight.id;
+    const loserId =
+      this.winner === Winner.right ? this.treeRight.id : this.treeLeft.id;
+
+    this.api.postVote(winnerId, loserId).subscribe(
+      () => {
+        this.fetch();
+      },
+      (errorStatus: number) => {
+        this.loadingTrees = false;
+        if (errorStatus === 0) {
+          this.errorMsg =
+            'An client-side error occured! Please ensure that you are connected to the internet!';
+        } else if (errorStatus === 400) {
+          this.errorMsg =
+            'A developer fucked up and programmed a bad request (wrong parameter or query). Sorry! :(';
+        } else if (errorStatus === 404) {
+          this.errorMsg =
+            'The database is empty! Please upload images first (the plus button in the bottom left menu)';
+        } else {
+          this.errorMsg =
+            'An undefined error occured! There is probably something wrong with the server...';
+        }
+        this.errorAlert();
+      }
+    );
+    this.outAnimation();
   }
 
-  // Checks if user already selected a tree
-  verify() {
-    return this.clickable;
+  inAnimation() {
+    this.animate = true;
+    this.fade = false;
+    setTimeout(() => {
+      this.animate = false;
+      this.clickable = true;
+    }, fadeAnimationLength);
   }
 
-  // User selected any tree -> Make animations and reset view after 2 seconds
-  afterSelect() {
-    // TODO: Start getting next trees here
+  outAnimation() {
+    this.animate = true;
     this.isWinnerLeft = this.winner === Winner.left;
     this.isWinnerRight = this.winner === Winner.right;
 
-    const winnerId = this.isWinnerLeft ? this.treeLeft.id : this.treeRight.id;
-    const loserId = this.isWinnerLeft ? this.treeRight.id : this.treeLeft.id;
+    setTimeout(() => {
+      this.fade = true;
+    }, transformAnimationLength);
 
-    this.api.postVote(winnerId, loserId).subscribe(() => {
-      this.api.getNextTrees().then(this.resetView.bind(this));
-    });
+    setTimeout(() => {
+      this.isWinnerRight = false;
+      this.isWinnerLeft = false;
+      this.animate = false;
+    }, fadeAnimationLength + transformAnimationLength);
   }
 
-  // Reset everyting and query new stuff
-  resetView({ treeLeft, treeRight }: { treeLeft: Tree; treeRight: Tree }) {
-    if (!treeLeft || !treeRight) return 0;
-    this.fade = true;
+  // Checks if user already selected a tree
+  private verify() {
+    return this.clickable;
+  }
 
-    const fadeAnimationLength = 300;
-    const transformAnimationLength = 500;
+  private async errorAlert() {
+    const alert = await this.alertController.create({
+      header: 'Ups!',
+      message: this.errorMsg,
+      buttons: ['Okay'],
+    });
 
-    setTimeout(
-      (() => {
-        this.winner = undefined;
-        this.isWinnerLeft = false;
-        this.isWinnerRight = false;
-        this.treeLeft = treeLeft;
-        this.treeRight = treeRight;
-      }).bind(this),
-      fadeAnimationLength
-    );
-
-    setTimeout(
-      (() => {
-        this.clickable = true;
-        this.fade = false;
-      }).bind(this),
-      fadeAnimationLength + transformAnimationLength
-    );
+    await alert.present();
   }
 }

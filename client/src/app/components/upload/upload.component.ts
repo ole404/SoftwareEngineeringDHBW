@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { PhotoService } from 'src/app/services/photo.service';
 import { Storage } from '@ionic/storage-angular';
-import axios from 'axios';
 import { GeoService } from '../../services/geo.service';
 import { ApiService } from 'src/app/services/api.service';
 import { CameraResultType } from '@capacitor/camera';
@@ -17,33 +16,44 @@ export class UploadComponent implements OnInit {
   treeNameInput: string = null;
   lat = 0;
   lon = 0;
+  errorMsg = '';
 
   constructor(
     public modalController: ModalController,
+    public alertController: AlertController,
     public photoService: PhotoService,
     private storage: Storage,
     private geoService: GeoService,
-    private apiServer: ApiService
+    private api: ApiService
   ) {}
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.getPhotoAndGeo();
+  }
+
+  async getPhotoAndGeo() {
+    await this.askPermissions();
     this.photoService
       .takePicture()
       .then((image) => {
-        console.log(image);
         this.base64image = image.base64String;
       })
-      .catch(((err) => this.dismiss()).bind(this));
-    const { coords } = await this.geoService.getCurrentPosition();
-    this.lat = coords.latitude;
-    this.lon = coords.longitude;
+      .catch(this.dismiss.bind(this));
+    this.geoService
+      .getCurrentPosition()
+      .then(({ coords }) => {
+        console.log(coords);
+        this.lat = coords.latitude;
+        this.lon = coords.longitude;
+      })
+      .catch(this.dismiss.bind(this));
   }
 
   async uploadItem() {
     const userName = await this.storage.get('name');
     const treeName = this.treeNameInput;
     if (!treeName) return false;
-    this.apiServer
+    this.api
       .postUpload({
         userName,
         treeName,
@@ -53,10 +63,30 @@ export class UploadComponent implements OnInit {
         },
         image: this.base64image as CameraResultType.Base64,
       })
-      .subscribe(this.dismiss.bind(this));
+      .subscribe({
+        error: (errorStatus: number) => {
+          this.errorMsg = this.api.getErrorMsg(errorStatus);
+          this.errorAlert();
+        },
+        complete: this.dismiss.bind(this),
+      });
+  }
+
+  async askPermissions() {
+    console.log('TODO'); // TODO: implement permission handling
   }
 
   dismiss() {
     this.modalController.dismiss();
+  }
+
+  private async errorAlert() {
+    const alert = await this.alertController.create({
+      header: 'Ups!',
+      message: this.errorMsg,
+      buttons: ['Okay'],
+    });
+
+    await alert.present();
   }
 }

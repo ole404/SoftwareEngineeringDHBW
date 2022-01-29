@@ -33,7 +33,12 @@ router.get(
 router.get(
   '/random',
   async (req: Request, res: Response<{ treeLeft: Tree; treeRight: Tree }>) => {
-    const trees = await storage.getTwoRandomTrees();
+    const trees = await storage.getTwoRandomTrees().catch(() => {
+      res.sendStatus(404);
+      return null;
+    });
+    if (!trees) return;
+
     res.json(trees);
   }
 );

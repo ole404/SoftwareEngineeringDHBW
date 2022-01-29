@@ -8,6 +8,10 @@
 </ion-header>
 
 <ion-content>
+  <ion-progress-bar
+    *ngIf="loadingTrees"
+    type="indeterminate"
+  ></ion-progress-bar>
   <div *ngFor="let tree of trees; let i=index">
     <ion-card class="card">
       <img src="{{host}}/trees/image/{{tree.id}}" class="card-img" />

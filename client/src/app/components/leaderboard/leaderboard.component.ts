@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 
 import { environment } from '../../../environments/environment';
 
@@ -13,18 +13,42 @@ import Tree from '../../interfaces/tree';
 })
 export class LeaderboardComponent implements OnInit {
   trees: Tree[];
+  loadingTrees = true;
+  errorMsg = '';
   host = environment.backendApi;
 
   constructor(
     public modalController: ModalController,
+    public alertController: AlertController,
     private api: ApiService
   ) {}
 
-  async ngOnInit() {
-    this.trees = await this.api.getTrees(10);
+  ngOnInit() {
+    this.api.getTrees(10).subscribe(
+      (body) => {
+        this.trees = body;
+        this.loadingTrees = false;
+      },
+      (errorStatus: number) => {
+        this.trees = undefined;
+        this.loadingTrees = false;
+        this.errorMsg = this.api.getErrorMsg(errorStatus);
+        this.errorAlert();
+      }
+    );
   }
 
   dismiss() {
     this.modalController.dismiss();
+  }
+
+  private async errorAlert() {
+    const alert = await this.alertController.create({
+      header: 'Ups!',
+      message: this.errorMsg,
+      buttons: ['Okay'],
+    });
+
+    await alert.present();
   }
 }

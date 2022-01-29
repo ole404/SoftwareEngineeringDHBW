@@ -44,19 +44,17 @@ async function main() {
   // create express app
   const app = express();
 
+  // enable cors in development mode since the client is run interactivly on seperate port -> cross reference
+  if (!isProd) app.use(cors());
+
   // extend maximum body limit
   app.use(express.json({ limit: '16mb' }));
-
-  // use cors when in dev-mode, because the client is served in interactive mode on antoher port
-  if (!isProd) app.use(cors());
 
   // use router for api on '/trees'
   app.use('/trees', treesRouter);
 
   // serve static files from 'client' in production mode
-  // enable cors in development mode since the client is run interactivly on seperate port -> cross reference
   if (isProd) serveStatic(app);
-  else app.use(cors());
 
   // run app as http-server and listen on specified port
   const server = http.createServer(app);

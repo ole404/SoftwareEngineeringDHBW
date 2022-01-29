@@ -8,12 +8,11 @@
 </ion-header>
 
 <ion-content>
-  <ion-card class="card">
+  <ion-card class="card" *ngIf="base64image">
     <img
       [src]="'data:image/jpeg;base64,' + base64image"
       class="preview"
       alt="Image"
-      *ngIf="base64image"
     />
     <ion-card-header>
       <ion-card-title>Preview</ion-card-title>

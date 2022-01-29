@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
 import { Map, tileLayer, marker, icon } from 'leaflet';
 import { PhotoService } from '../services/photo.service';
 import { ApiService } from '../services/api.service';
@@ -14,8 +14,11 @@ import { Tree } from '../interfaces/index';
 })
 export class MapPage implements OnInit {
   treeLocations: Tree[] = [];
+  loadingTrees = true;
+  errorMsg = '';
 
   constructor(
+    public alertController: AlertController,
     public plt: Platform,
     public photoService: PhotoService,
     private api: ApiService,
@@ -27,9 +30,6 @@ export class MapPage implements OnInit {
   ionViewDidLoad(): void {}
   ionViewDidEnter() {
     this.initMap();
-  }
-  takePicture() {
-    this.photoService.takePicture();
   }
 
   addMarkers(map) {
@@ -44,14 +44,37 @@ export class MapPage implements OnInit {
     }
   }
 
-  async getLocations(map) {
-    this.treeLocations = await this.api.getTrees(0);
-    console.log(this.treeLocations);
+  getLocations(map) {
+    this.api.getTrees(10).subscribe(
+      (body) => {
+        this.treeLocations = body;
+        this.loadingTrees = false;
+      },
+      (errorStatus: number) => {
+        this.treeLocations = [];
+        this.loadingTrees = false;
+        this.errorMsg = this.api.getErrorMsg(errorStatus);
+        this.errorAlert();
+      }
+    );
+  }
+
+  private async errorAlert() {
+    const alert = await this.alertController.create({
+      header: 'Ups!',
+      message: this.errorMsg,
+      buttons: ['Okay'],
+    });
+
+    await alert.present();
   }
 
   private async initMap() {
     const { coords } = await this.geoService.getCurrentPosition();
-    const map = new Map('map').setView([coords.latitude, coords.longitude], 23); //TODO: maybe adapt zoom and starting location to trees
+    const map = new Map('map').setView(
+      [coords.latitude || 51.477928, coords.longitude || -0.001545],
+      23
+    ); //TODO: maybe adapt zoom and starting location to trees
 
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
