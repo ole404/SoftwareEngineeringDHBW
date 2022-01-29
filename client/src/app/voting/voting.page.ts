@@ -71,10 +71,11 @@ export class VotingPage implements OnInit {
     this.isWinnerRight = this.winner === Winner.right;
 
     const winnerId = this.isWinnerLeft ? this.treeLeft.id : this.treeRight.id;
-    const looserId = this.isWinnerLeft ? this.treeRight.id : this.treeLeft.id;
+    const loserId = this.isWinnerLeft ? this.treeRight.id : this.treeLeft.id;
 
-    this.api.postVote(winnerId, looserId);
-    this.api.getNextTrees().then(this.resetView.bind(this));
+    this.api.postVote(winnerId, loserId).subscribe(() => {
+      this.api.getNextTrees().then(this.resetView.bind(this));
+    });
   }
 
   // Reset everyting and query new stuff

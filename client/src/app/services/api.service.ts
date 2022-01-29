@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { environment } from './../../environments/environment';
 
@@ -40,14 +40,14 @@ export class ApiService {
     );
   }
 
-  postVote(winnerId: string, looserId: string) {
+  postVote(winnerId: string, loserId: string) {
     const endpoint = `${environment.backendApi}/trees/vote`;
     const options = {
       observe: 'response' as const,
       responseType: 'text' as const,
-      params: { winnerId, looserId },
+      params: { loserId, winnerId },
     };
-    return this.http.post(endpoint, options).pipe();
+    return this.http.post(endpoint, null, options).pipe();
   }
 
   postUpload(newTree: NewTree) {
