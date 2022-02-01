@@ -104,7 +104,7 @@ export class VotingPage implements OnInit {
     const winnerId =
       this.winner === Winner.left ? this.treeLeft.id : this.treeRight.id;
     const loserId =
-      this.winner === Winner.right ? this.treeRight.id : this.treeLeft.id;
+      this.winner === Winner.left ? this.treeRight.id : this.treeLeft.id;
 
     this.api.postVote(winnerId, loserId).subscribe(
       () => {
