@@ -22,7 +22,7 @@ export class LoginPage implements OnInit {
   }
 
   onLogin() {
-    // Safe name to lacal storage and redirect user to voting page
+    // Safe name to local storage and redirect user to voting page
     this.storage.set('name', this.name);
     this.router.navigateByUrl('/voting');
   }
