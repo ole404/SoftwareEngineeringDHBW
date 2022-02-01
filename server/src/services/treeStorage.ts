@@ -52,14 +52,7 @@ export class TreeStorage {
    * @param newScore - The new ELO-Ranking of the tree
    */
   async updateScore(treeIdToUpdate: string, newScore: number) {
-    await treeModel.updateOne(
-      { _id: treeIdToUpdate },
-      { eloRating: newScore },
-      function (err: Error) {
-        if (err) throw err;
-        console.log('Elo-Rating updated');
-      }
-    );
+    await treeModel.updateOne({ _id: treeIdToUpdate }, { eloRating: newScore });
   }
   /**
    * Returns all trees in the database
@@ -84,8 +77,7 @@ export class TreeStorage {
    * @returns Two random trees from the database
    */
   async getTwoRandomTrees() {
-    const queriedTrees = await treeModel.find({ $sample: { size: 2 } });
-    console.log(queriedTrees);
+    const queriedTrees = await treeModel.aggregate([{ $sample: { size: 2 } }]);
     if (queriedTrees.length !== 2) throw Error('meeeep'); // TODO: handle this
     const treeLeft: Tree = {
       id: queriedTrees[0]._id,
