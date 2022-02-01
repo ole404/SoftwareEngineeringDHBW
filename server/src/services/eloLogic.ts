@@ -9,9 +9,9 @@
 function calculateExpectation(eloWinnerTree: number, eloLooserTree: number) {
   //This equation calculates the percentage at which tree is supposed to win by taking into account the ELO difference
   const expectationValueWinnerTree =
-    1 / (1 + 10 * ((eloLooserTree - eloWinnerTree) / 400));
+    1 / (1 + 10 ** ((eloLooserTree - eloWinnerTree) / 400));
   const expectationValueLooserTree =
-    1 / (1 + 10 * ((eloWinnerTree - eloLooserTree) / 400));
+    1 / (1 + 10 ** ((eloWinnerTree - eloLooserTree) / 400));
   //The win percentages are only valid if they equal one when added up
   if (expectationValueWinnerTree + expectationValueLooserTree == 1) {
     return { expectationValueWinnerTree, expectationValueLooserTree };
@@ -33,9 +33,11 @@ export function calculateNewElo(eloWinnerTree: number, eloLooserTree: number) {
   const { expectationValueWinnerTree, expectationValueLooserTree } =
     calculateExpectation(eloWinnerTree, eloLooserTree);
   //After the Expectation Value is calculated, the trees' ELO gets adjusted with the standard factor 10 times the result multiplier
-  const newEloWinnerTree =
-    eloWinnerTree + 20 * (1 - expectationValueWinnerTree);
-  const newEloLooserTree =
-    eloLooserTree + 20 * (0 - expectationValueLooserTree);
+  const newEloWinnerTree = Math.round(
+    eloWinnerTree + 20 * (1 - expectationValueWinnerTree)
+  );
+  const newEloLooserTree = Math.round(
+    eloLooserTree + 20 * (0 - expectationValueLooserTree)
+  );
   return { newEloWinnerTree, newEloLooserTree };
 }
