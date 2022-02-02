@@ -112,18 +112,11 @@ export class VotingPage implements OnInit {
       },
       (errorStatus: number) => {
         this.loadingTrees = false;
-        if (errorStatus === 0) {
+        if (errorStatus === 579) {
           this.errorMsg =
-            'An client-side error occured! Please ensure that you are connected to the internet!';
-        } else if (errorStatus === 400) {
-          this.errorMsg =
-            'A developer fucked up and programmed a bad request (Wrong parameter or query). Sorry! :(';
-        } else if (errorStatus === 579) {
-          this.errorMsg =
-            'The database has not enough trees! Please upload images first (The plus button in the bottom right menu)';
+            'The database has not enough Trees! Please upload images first (The plus button in the bottom right menu)';
         } else {
-          this.errorMsg =
-            'An undefined error occured! There is probably something wrong with the server...';
+          this.errorMsg = this.api.getErrorMsg(errorStatus);
         }
         this.errorAlert();
       }
