@@ -34,7 +34,7 @@ router.get(
   '/random',
   async (req: Request, res: Response<{ treeLeft: Tree; treeRight: Tree }>) => {
     const trees = await storage.getTwoRandomTrees().catch(() => {
-      res.sendStatus(404);
+      res.sendStatus(579);
       return null;
     });
     if (!trees) return;
@@ -49,13 +49,17 @@ router.get(
   param('treeId').isMongoId(),
   async (req: Request, res: Response<Buffer>) => {
     if (!validationResult(req).isEmpty()) return res.sendStatus(400);
-    const image = await storage.oneImage(req.params.treeId);
-    const buffer = Buffer.from(image, 'base64');
+    try {
+      const image = await storage.oneImage(req.params.treeId);
+      const buffer = Buffer.from(image, 'base64');
 
-    //converting the base64 tree image into a png
-    res.contentType('jpeg');
-    res.writeHead(200, { 'Content-Length': buffer.length });
-    res.end(buffer);
+      //converting the base64 tree image into a png
+      res.contentType('jpeg');
+      res.writeHead(200, { 'Content-Length': buffer.length });
+      return res.end(buffer);
+    } catch (e) {
+      res.sendStatus(400);
+    }
   }
 );
 
@@ -66,36 +70,48 @@ router.get(
   async (req: Request, res: Response<Tree>) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.sendStatus(400);
-    const tree = await storage.oneTree(req.params.treeId);
-    res.json(tree);
+    try {
+      const tree = await storage.oneTree(req.params.treeId);
+      res.json(tree);
+    } catch (e) {
+      return res.sendStatus(400);
+    }
   }
 );
 
 //post api changing the elo scores of the trees specified
-router.post('/vote', async (req: Request, res: Response) => {
-  query('loserId').isMongoId();
-  query('winnerId').isMongoId();
-  const errors = validationResult(req);
+router.post(
+  '/vote',
+  [query('loserId').isMongoId(), query('winnerId').isMongoId()],
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    let looserTree: Tree;
+    let winnerTree: Tree;
 
-  if (!errors.isEmpty())
-    return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-  const loserId = req.query.loserId as string;
-  const winnerId = req.query.winnerId as string;
+    const loserId = req.query.loserId as string;
+    const winnerId = req.query.winnerId as string;
 
-  //getting the specified trees info from the database
-  const looserTree = await storage.oneTree(loserId);
-  const winnerTree = await storage.oneTree(winnerId);
-  //calculating the new elo score
-  const { newEloWinnerTree, newEloLooserTree } = calculateNewElo(
-    winnerTree.eloRating,
-    looserTree.eloRating
-  );
-  storage.updateScore(winnerId, newEloWinnerTree);
-  storage.updateScore(loserId, newEloLooserTree);
+    //getting the specified trees info from the database
+    try {
+      looserTree = await storage.oneTree(loserId);
+      winnerTree = await storage.oneTree(winnerId);
+    } catch (e) {
+      return res.sendStatus(400);
+    }
+    //calculating the new elo score
+    const { newEloWinnerTree, newEloLooserTree } = calculateNewElo(
+      winnerTree.eloRating,
+      looserTree.eloRating
+    );
+    storage.updateScore(winnerId, newEloWinnerTree);
+    storage.updateScore(loserId, newEloLooserTree);
 
-  res.sendStatus(200);
-});
+    res.sendStatus(200);
+  }
+);
 
 //post api uploading a new tree to the database
 router.post(
@@ -104,14 +120,6 @@ router.post(
     body('treeName').isString(),
     body('userName').isString(),
     check('image').isBase64().bail(),
-    check('image').custom(async (value: string) => {
-      //checking wether the image to be uploaded is actually a tree
-      const treeValidator = new Treecognition('gcloud.json');
-      const isTree = await treeValidator.checkForTree(value);
-      if (!isTree) {
-        throw new Error('Not a tree');
-      }
-    }),
     check('geo.lat').isFloat(),
     check('geo.lon').isFloat(),
   ],
@@ -119,14 +127,19 @@ router.post(
     const tree = req.body as NewTree;
     const errors = validationResult(req);
     if (!errors.isEmpty())
-      return res.sendStatus(400).json({
+      return res.status(400).json({
         errors: errors.array().map((val) => ({
           msg: val.msg,
           location: val.location,
           param: val.param,
         })),
       });
-
+    //checking wether the image to be uploaded is actually a tree
+    const treeValidator = new Treecognition('gcloud.json');
+    const isTree = await treeValidator.checkForTree(tree.image);
+    if (!isTree) {
+      return res.status(489).send('Not a Tree');
+    }
     await storage.insertTree(tree);
     res.sendStatus(200);
   }
