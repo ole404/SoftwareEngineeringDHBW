@@ -49,17 +49,18 @@ router.get(
   param('treeId').isMongoId(),
   async (req: Request, res: Response<Buffer>) => {
     if (!validationResult(req).isEmpty()) return res.sendStatus(400);
-    try {
-      const image = await storage.oneImage(req.params.treeId);
-      const buffer = Buffer.from(image, 'base64');
 
-      //converting the base64 tree image into a png
-      res.contentType('jpeg');
-      res.writeHead(200, { 'Content-Length': buffer.length });
-      return res.end(buffer);
-    } catch (e) {
+    const image = await storage.oneImage(req.params.treeId).catch(() => {
       res.sendStatus(400);
-    }
+      return null;
+    });
+    if (!image) return;
+    const buffer = Buffer.from(image, 'base64');
+
+    //converting the base64 tree image into a png
+    res.contentType('jpeg');
+    res.writeHead(200, { 'Content-Length': buffer.length });
+    res.end(buffer);
   }
 );
 
@@ -70,12 +71,12 @@ router.get(
   async (req: Request, res: Response<Tree>) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.sendStatus(400);
-    try {
-      const tree = await storage.oneTree(req.params.treeId);
-      res.json(tree);
-    } catch (e) {
-      return res.sendStatus(400);
-    }
+    const tree = await storage.oneTree(req.params.treeId).catch(() => {
+      res.sendStatus(400);
+      return null;
+    });
+    if (!tree) return;
+    res.json(tree);
   }
 );
 
@@ -98,7 +99,7 @@ router.post(
     try {
       looserTree = await storage.oneTree(loserId);
       winnerTree = await storage.oneTree(winnerId);
-    } catch (e) {
+    } catch {
       return res.sendStatus(400);
     }
     //calculating the new elo score
@@ -106,8 +107,12 @@ router.post(
       winnerTree.eloRating,
       looserTree.eloRating
     );
-    storage.updateScore(winnerId, newEloWinnerTree);
-    storage.updateScore(loserId, newEloLooserTree);
+    try {
+      storage.updateScore(winnerId, newEloWinnerTree);
+      storage.updateScore(loserId, newEloLooserTree);
+    } catch {
+      return res.sendStatus(400);
+    }
 
     res.sendStatus(200);
   }
