@@ -37,8 +37,17 @@ Then install all the recommended extensions. This will enable automated code lin
 **Best Practice:** Start MongoDB in a docker container:
 
 ```sh
-docker run --rm -d -p 27017:27017 --name tannder-dev-db -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest
+cd server
+npm run start:db
 ```
+
+or native
+
+```sh
+docker run --rm -p 27017:27017 --name tannder-dev-db -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest
+```
+
+_Note that the container has no volume attached, so all data gets lost after a restart!_
 
 ### Express Server
 
