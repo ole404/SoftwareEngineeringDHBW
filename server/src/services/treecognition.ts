@@ -22,8 +22,7 @@ export class Treecognition {
    * @param image The image as a base64 string
    * */
   async checkForTree(image: string): Promise<boolean> {
-    return new Promise((res) => res(true));
-    /* const [result] = await this.client.labelDetection({
+    const [result] = await this.client.labelDetection({
       image: { content: image },
     });
     const labels = result.labelAnnotations;
@@ -35,6 +34,6 @@ export class Treecognition {
       return hasTrees;
     } else {
       return false;
-    } */
+    }
   }
 }
