@@ -32,7 +32,7 @@ export function calculateNewElo(eloWinnerTree: number, eloLooserTree: number) {
   // Calculates which Tree is expected to win according to the ELO
   const { expectationValueWinnerTree, expectationValueLooserTree } =
     calculateExpectation(eloWinnerTree, eloLooserTree);
-  //After the Expectation Value is calculated, the trees' ELO gets adjusted with the standard factor 10 times the result multiplier
+  //After the Expectation Value is calculated, the trees' ELO gets adjusted with the standard factor 20 times the result multiplier
   const newEloWinnerTree = Math.round(
     eloWinnerTree + 20 * (1 - expectationValueWinnerTree)
   );
