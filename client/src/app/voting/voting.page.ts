@@ -77,9 +77,9 @@ export class VotingPage implements OnInit {
       (errorStatus: number) => {
         this.loadingTrees = false;
         console.log(errorStatus);
-        if (errorStatus === 404) {
+        if (errorStatus === 579) {
           this.errorMsg =
-            'The database is empty! Please upload images first (the plus button in the bottom left menu)';
+            'The database has not enough Trees! Please upload images first (The plus button in the bottom right menu)';
         } else {
           this.errorMsg = this.api.getErrorMsg(errorStatus);
         }
@@ -117,10 +117,10 @@ export class VotingPage implements OnInit {
             'An client-side error occured! Please ensure that you are connected to the internet!';
         } else if (errorStatus === 400) {
           this.errorMsg =
-            'A developer fucked up and programmed a bad request (wrong parameter or query). Sorry! :(';
-        } else if (errorStatus === 404) {
+            'A developer fucked up and programmed a bad request (Wrong parameter or query). Sorry! :(';
+        } else if (errorStatus === 579) {
           this.errorMsg =
-            'The database is empty! Please upload images first (the plus button in the bottom left menu)';
+            'The database has not enough trees! Please upload images first (The plus button in the bottom right menu)';
         } else {
           this.errorMsg =
             'An undefined error occured! There is probably something wrong with the server...';
