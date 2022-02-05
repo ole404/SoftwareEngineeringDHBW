@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AlertController, Platform } from '@ionic/angular';
 import { Map, tileLayer, marker, icon } from 'leaflet';
 import { PhotoService } from '../services/photo.service';
@@ -12,10 +12,12 @@ import { Tree } from '../interfaces/index';
   templateUrl: './map.page.html',
   styleUrls: ['./map.page.scss'],
 })
-export class MapPage implements OnInit {
+export class MapPage implements OnInit, OnDestroy {
   treeLocations: Tree[] = [];
   loadingTrees = true;
   errorMsg = '';
+  public map: Map;
+  public zoom: number;
 
   constructor(
     public alertController: AlertController,
@@ -24,11 +26,18 @@ export class MapPage implements OnInit {
     private api: ApiService,
     private geoService: GeoService
   ) {}
+  
 
-  ngOnInit() {}
+  public ngOnInit(): void {}
+
+  ngOnDestroy() {
+    this.map.clearAllEventListeners;
+    this.map.remove();
+  };
+
   //ngAfterViewInit(): void{}
   ionViewDidLoad(): void {}
-  ionViewDidEnter() {
+  ionViewDidEnter(): void {
     this.initMap();
   }
 
@@ -49,6 +58,7 @@ export class MapPage implements OnInit {
       (body) => {
         this.treeLocations = body;
         this.loadingTrees = false;
+        this.addMarkers(map)
       },
       (errorStatus: number) => {
         this.treeLocations = [];
@@ -71,17 +81,16 @@ export class MapPage implements OnInit {
 
   private async initMap() {
     const { coords } = await this.geoService.getCurrentPosition();
-    const map = new Map('map').setView(
+    this.map = new Map('map').setView(
       [coords.latitude || 51.477928, coords.longitude || -0.001545],
       23
-    ); //TODO: maybe adapt zoom and starting location to trees
-
+    ); 
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    }).addTo(this.map);
 
-    map.invalidateSize();
+    this.map.invalidateSize();
 
     const customMarkerIcon = icon({
       iconUrl: '', //TODO: add tree icon and add to marker()
@@ -89,6 +98,6 @@ export class MapPage implements OnInit {
       popupAnchor: [0, -20],
     });
 
-    this.getLocations(map);
+    this.getLocations(this.map);
   }
 }

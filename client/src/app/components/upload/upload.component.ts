@@ -52,7 +52,11 @@ export class UploadComponent implements OnInit {
   async uploadItem() {
     const userName = await this.storage.get('name');
     const treeName = this.treeNameInput;
-    if (!treeName) return false;
+    if (!treeName) {
+      this.errorMsg = "please give your tree a name";
+      this.errorAlert();
+      return false;
+    }
     this.api
       .postUpload({
         userName,
@@ -64,11 +68,14 @@ export class UploadComponent implements OnInit {
         image: this.base64image as CameraResultType.Base64,
       })
       .subscribe({
+        //complete: () => {console.log("upload completed"); this.dismiss.bind(this)}, 
         error: (errorStatus: number) => {
+          console.log("an error occured")
           this.errorMsg = this.api.getErrorMsg(errorStatus);
+          console.log("error: ", this.errorMsg)
           this.errorAlert();
         },
-        complete: this.dismiss.bind(this),
+        complete: this.dismiss.bind(this), 
       });
   }
 
