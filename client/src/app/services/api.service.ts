@@ -122,9 +122,7 @@ export class ApiService {
    * @returns Obervable
    */
   postUpload(newTree: NewTree) {
-    console.log("trying to upload ", newTree)
     const endpoint = `${environment.backendApi}/trees/upload`;
-    console.log("to: ", endpoint)
     const options = {
       observe: 'response' as const,
       responseType: 'text' as const,
