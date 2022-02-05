@@ -5,9 +5,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 import { environment } from './../../environments/environment';
-
 import { NewTree, Tree } from '../interfaces/index';
 
+/**
+ * Middleware-like function wich logs a catched error to the console, then re-throw it with rxjs
+ *
+ * @param error HttpErrorResponse
+ */
 const handleError = (error: HttpErrorResponse) => {
   if (error.status === 0) {
     // A client-side or network error occurred. Handle it accordingly.
@@ -25,10 +29,12 @@ const handleError = (error: HttpErrorResponse) => {
   return throwError(error.status);
 };
 
-@Injectable({
-  providedIn: 'root',
-})
+/**
+ * The ApiService implements the API defined in the Swagger document
+ */
+@Injectable({ providedIn: 'root' })
 export class ApiService {
+  // Default error messages
   errorMessages = {
     nocon:
       'Cannot connect to the server! Please ensure that you are connected to the internet and that the server is up and running!',
@@ -51,42 +57,52 @@ export class ApiService {
     }
   }
 
+  /**
+   * Fetch trees from API
+   *
+   * @param max Maximum number of returned tree, 0 means infinity
+   * @returns Obervable<Tree[]>
+   */
   getTrees(max: number) {
     const endpoint = `${environment.backendApi}/trees/many`;
     const options = { observe: 'body' as const, params: { max } };
     return this.http
       .get<Tree[]>(endpoint, options)
       .pipe(catchError(handleError));
-    /* return new Promise<Tree[]>((res) =>
-      this.http.get(endpoint, options).subscribe((body: Tree[]) => res(body))
-    ); */
   }
 
+  /**
+   * Fetch two random trees from API
+   *
+   * @returns Obervable<{ treeLeft: Tree; treeRight: Tree }>
+   */
   getNextTrees() {
     const endpoint = `${environment.backendApi}/trees/random`;
     const options = { observe: 'body' as const };
     return this.http
       .get<{ treeLeft: Tree; treeRight: Tree }>(endpoint, options)
       .pipe(catchError(handleError));
-    /* return new Promise<{ treeLeft: Tree; treeRight: Tree }>((res) =>
-      this.http
-        .get(endpoint, options)
-        .subscribe((body: { treeLeft: Tree; treeRight: Tree }) => {
-          console.log(body);
-          res(body);
-        })
-    ); */
   }
 
+  /**
+   * Fetch a single tree by ID from API
+   *
+   * @param id Id of tree
+   * @returns Obervable<Tree[]>
+   */
   getTree(id: string) {
     const endpoint = `${environment.backendApi}/trees/single/${id}`;
     const options = { observe: 'body' as const };
     return this.http.get<Tree>(endpoint, options).pipe(catchError(handleError));
-    /* return new Promise<Tree>((res) =>
-      this.http.get(endpoint, options).subscribe((body: Tree) => res(body))
-    ); */
   }
 
+  /**
+   * Post winner and loser of a vote to API
+   *
+   * @param winnerId Id of the winner tree
+   * @param loserId Id of the loser tree
+   * @returns Obervable
+   */
   postVote(winnerId: string, loserId: string) {
     const endpoint = `${environment.backendApi}/trees/vote`;
     const options = {
@@ -99,6 +115,12 @@ export class ApiService {
       .pipe(catchError(handleError));
   }
 
+  /**
+   * Post a new Tree to API
+   *
+   * @param newTree Tree information to be uploaded: picture, user/tree-name, geoinfo...
+   * @returns Obervable
+   */
   postUpload(newTree: NewTree) {
     const endpoint = `${environment.backendApi}/trees/upload`;
     const options = {

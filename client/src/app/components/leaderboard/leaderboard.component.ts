@@ -12,10 +12,9 @@ import Tree from '../../interfaces/tree';
   styleUrls: ['./leaderboard.component.scss'],
 })
 export class LeaderboardComponent implements OnInit {
-  trees: Tree[];
-  loadingTrees = true;
-  errorMsg = '';
-  host = environment.backendApi;
+  trees: Tree[]; // Best 10 trees
+  loadingTrees = true; // Weather progress-bar (loading animation) should be shown
+  host = environment.backendApi; // necessary for getting tree images via <img src=""> tag
 
   constructor(
     public modalController: ModalController,
@@ -32,8 +31,7 @@ export class LeaderboardComponent implements OnInit {
       (errorStatus: number) => {
         this.trees = undefined;
         this.loadingTrees = false;
-        this.errorMsg = this.api.getErrorMsg(errorStatus);
-        this.errorAlert();
+        this.errorAlert(errorStatus);
       }
     );
   }
@@ -42,10 +40,11 @@ export class LeaderboardComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  private async errorAlert() {
+  private async errorAlert(errorStatus) {
+    const errorMsg = this.api.getErrorMsg(errorStatus);
     const alert = await this.alertController.create({
       header: 'Ups!',
-      message: this.errorMsg,
+      message: errorMsg,
       buttons: ['Okay'],
     });
 
