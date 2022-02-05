@@ -8,15 +8,22 @@ enum Winner {
   right,
 }
 
+/**
+ * Sleep function similar to setTimeout but in an async/await fashion
+ * ```js
+ * // some code goes here
+ * await sleep(2000)
+ * // after 2 seconds code runs here
+ * ```
+ *
+ * @param ms sleep time in ms
+ * @returns void
+ */
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const requestMock = async () => {
-  await sleep(500);
-  return 0;
-};
-
+// These must be equal to the animation lengths defined in the .scss
 const fadeAnimationLength = 300;
 const transformAnimationLength = 500;
 @Component({
@@ -27,18 +34,17 @@ const transformAnimationLength = 500;
 export class VotingPage implements OnInit {
   @ViewChild('leaderboard') leaderboard;
 
-  fade = true; // Sets opacity of cards to 0
+  treeLeft: Tree;
+  treeRight: Tree;
+
   winner: Winner;
   isWinnerLeft = false;
   isWinnerRight = false;
 
-  treeLeft: Tree;
-  treeRight: Tree;
-  loadingTrees = true;
-  errorMsg = '';
-  // Used for click validation, so the user can't click multiple times
-  clickable = false;
-  animate = false;
+  fade = true; // Sets opacity of cards to 0
+  loadingTrees = true; // Used to show a progress bar
+  clickable = false; // Used for click validation, so the user can't click multiple times
+  animate = false; // Used to time animations, blocks new animation if the old one wasn't finished
 
   constructor(
     public routerOutlet: IonRouterOutlet,
@@ -46,6 +52,12 @@ export class VotingPage implements OnInit {
     public alertController: AlertController
   ) {}
 
+  /**
+   * Overall Flow of this component:
+   * - fetch() -> In-Animation / Show Error
+   * - _User votes_ -> vote() -> Out-Animation
+   * - postVote() -> Reset / Show Error
+   */
   ngOnInit() {
     this.fetch();
   }
@@ -54,7 +66,6 @@ export class VotingPage implements OnInit {
     this.treeLeft = undefined;
     this.treeRight = undefined;
     this.loadingTrees = true;
-    this.errorMsg = '';
     this.clickable = false;
     this.fade = true;
     this.isWinnerLeft = false;
@@ -63,27 +74,25 @@ export class VotingPage implements OnInit {
   }
 
   async fetch() {
+    // Wait for old animation to stop
     await sleep(
       this.animate ? fadeAnimationLength + transformAnimationLength : 0
     );
+    // Reset state
     this.reset();
+    // Fetch: get two random trees from server
     this.api.getNextTrees().subscribe(
       (body) => {
+        // On success: set left/right tree and start fade-in animation
         this.treeLeft = body.treeLeft;
         this.treeRight = body.treeRight;
         this.loadingTrees = false;
         this.inAnimation();
       },
       (errorStatus: number) => {
+        // On error: get error message based on response-status and show in dialog
         this.loadingTrees = false;
-        console.log(errorStatus);
-        if (errorStatus === 579) {
-          this.errorMsg =
-            'The database has not enough Trees! Please upload images first (The plus button in the bottom right menu)';
-        } else {
-          this.errorMsg = this.api.getErrorMsg(errorStatus);
-        }
-        this.errorAlert();
+        this.errorAlert(errorStatus);
       }
     );
   }
@@ -96,6 +105,7 @@ export class VotingPage implements OnInit {
     this.vote(Winner.right);
   }
 
+  // Voting logic
   vote(winner: Winner) {
     if (!this.verify()) return;
     this.clickable = false;
@@ -108,22 +118,21 @@ export class VotingPage implements OnInit {
 
     this.api.postVote(winnerId, loserId).subscribe(
       () => {
+        // On success: reset everything and start fetching new trees
         this.fetch();
       },
       (errorStatus: number) => {
+        // On error: get error message based on response-status and show in dialog
         this.loadingTrees = false;
-        if (errorStatus === 579) {
-          this.errorMsg =
-            'The database has not enough Trees! Please upload images first (The plus button in the bottom right menu)';
-        } else {
-          this.errorMsg = this.api.getErrorMsg(errorStatus);
-        }
-        this.errorAlert();
+        this.errorAlert(errorStatus);
       }
     );
     this.outAnimation();
   }
 
+  /**
+   * Starts fade-in animation after fetch
+   */
   inAnimation() {
     this.animate = true;
     this.fade = false;
@@ -133,6 +142,9 @@ export class VotingPage implements OnInit {
     }, fadeAnimationLength);
   }
 
+  /**
+   * Starts out-animation after user voted
+   */
   outAnimation() {
     this.animate = true;
     this.isWinnerLeft = this.winner === Winner.left;
@@ -154,10 +166,16 @@ export class VotingPage implements OnInit {
     return this.clickable;
   }
 
-  private async errorAlert() {
+  // Shows a pre-defined error message in a dialog
+  private async errorAlert(errorStatus) {
+    const errorMsg =
+      errorStatus === 579
+        ? 'The database has not enough Trees! Please upload images first (The plus button in the bottom right menu)'
+        : this.api.getErrorMsg(errorStatus);
+
     const alert = await this.alertController.create({
       header: 'Ups!',
-      message: this.errorMsg,
+      message: errorMsg,
       buttons: ['Okay'],
     });
 

@@ -9,12 +9,12 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./tree.component.scss'],
 })
 export class TreeComponent implements OnInit {
-  // Binds a tree and weather this tree has won or lost (or neither, then both are false)
   @Input() tree: Tree;
   @Output() voteEvent = new EventEmitter();
-  host = environment.backendApi;
 
-  openPreview = false;
+  host = environment.backendApi; // necessary for getting tree images via <img src=""> tag
+
+  openPreview = false; // Show image full-screen
 
   constructor() {}
 

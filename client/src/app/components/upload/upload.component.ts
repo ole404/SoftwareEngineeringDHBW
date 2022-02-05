@@ -12,11 +12,10 @@ import { CameraResultType } from '@capacitor/camera';
   styleUrls: ['./upload.component.scss'],
 })
 export class UploadComponent implements OnInit {
-  base64image: string = null;
-  treeNameInput: string = null;
-  lat = 0;
-  lon = 0;
-  errorMsg = '';
+  base64image: string = null; // Temporarely store the image local as base64string
+  treeNameInput: string = null; // Input for Name of the tree
+  lat = 0; // Geo Latitude
+  lon = 0; // Geo Longitude
 
   constructor(
     public modalController: ModalController,
@@ -31,6 +30,13 @@ export class UploadComponent implements OnInit {
     this.getPhotoAndGeo();
   }
 
+  /**
+   * Run on init ->
+   * 1. Ask user for camera and geo permission
+   * 2. Open Camera -> Generall overlay so the upload modal can live under it
+   * 3. Get lat & lon
+   * On any error (close the camera, goes back, or reject permissions...) close this modal
+   */
   async getPhotoAndGeo() {
     await this.askPermissions();
     this.photoService
@@ -42,19 +48,28 @@ export class UploadComponent implements OnInit {
     this.geoService
       .getCurrentPosition()
       .then(({ coords }) => {
-        console.log(coords);
         this.lat = coords.latitude;
         this.lon = coords.longitude;
       })
       .catch(this.dismiss.bind(this));
   }
 
+  /**
+   * Uploads the image with coordinates, user name and tree name.
+   * On error -> Show error, then close
+   * Else just close
+   */
   async uploadItem() {
     const userName = await this.storage.get('name');
     const treeName = this.treeNameInput;
     if (!treeName) {
-      this.errorMsg = "please give your tree a name";
-      this.errorAlert();
+      const alert = await this.alertController.create({
+        header: 'Wrong inputs!',
+        message: 'Please give you Tree a name!',
+        buttons: ['Okay'],
+      });
+
+      await alert.present();
       return false;
     }
     this.api
@@ -68,14 +83,11 @@ export class UploadComponent implements OnInit {
         image: this.base64image as CameraResultType.Base64,
       })
       .subscribe({
-        //complete: () => {console.log("upload completed"); this.dismiss.bind(this)}, 
+        //complete: () => {console.log("upload completed"); this.dismiss.bind(this)},
         error: (errorStatus: number) => {
-          console.log("an error occured")
-          this.errorMsg = this.api.getErrorMsg(errorStatus);
-          console.log("error: ", this.errorMsg)
-          this.errorAlert();
+          this.errorAlert(errorStatus);
         },
-        complete: this.dismiss.bind(this), 
+        complete: this.dismiss.bind(this),
       });
   }
 
@@ -87,10 +99,14 @@ export class UploadComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  private async errorAlert() {
+  private async errorAlert(errorStatus) {
+    const errorMsg =
+      errorStatus === 489
+        ? 'It seems like you uploaded image shows no tree!'
+        : this.api.getErrorMsg(errorStatus);
     const alert = await this.alertController.create({
       header: 'Ups!',
-      message: this.errorMsg,
+      message: errorMsg,
       buttons: ['Okay'],
     });
 

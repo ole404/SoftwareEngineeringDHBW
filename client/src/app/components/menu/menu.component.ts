@@ -29,6 +29,8 @@ export class MenuComponent implements OnInit {
       component: UploadComponent,
       cssClass: 'app-upload',
       swipeToClose: true,
+      animated: true,
+      keyboardClose: true,
     });
     return await modal.present();
   }

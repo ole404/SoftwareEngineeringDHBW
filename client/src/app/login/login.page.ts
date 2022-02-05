@@ -8,7 +8,6 @@ import { Storage } from '@ionic/storage-angular';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-  // Bind to input field
   name = '';
 
   constructor(private storage: Storage, private router: Router) {}
