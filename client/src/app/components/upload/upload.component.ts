@@ -38,7 +38,6 @@ export class UploadComponent implements OnInit {
    * On any error (close the camera, goes back, or reject permissions...) close this modal
    */
   async getPhotoAndGeo() {
-    await this.askPermissions();
     this.photoService
       .takePicture()
       .then((image) => {
@@ -87,12 +86,10 @@ export class UploadComponent implements OnInit {
         error: (errorStatus: number) => {
           this.errorAlert(errorStatus);
         },
-        complete: this.dismiss.bind(this),
+        complete: () => {
+          window.location.reload();
+        },
       });
-  }
-
-  async askPermissions() {
-    console.log('TODO'); // TODO: implement permission handling
   }
 
   dismiss() {

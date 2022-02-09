@@ -4,10 +4,18 @@
   </ion-fab-button>
 
   <ion-fab-list side="start">
-    <ion-fab-button routerLink="/map" routerDirection="forward">
+    <ion-fab-button
+      *ngIf="router.url !== '/map'"
+      routerLink="/map"
+      routerDirection="forward"
+    >
       <ion-icon name="map"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button routerLink="/voting" routerDirection="forward">
+    <ion-fab-button
+      *ngIf="router.url !== '/voting'"
+      routerLink="/voting"
+      routerDirection="forward"
+    >
       <ion-icon name="star"></ion-icon>
     </ion-fab-button>
     <ion-fab-button (click)="openLeaderboard()">
