@@ -38,19 +38,50 @@ export class UploadComponent implements OnInit {
    * On any error (close the camera, goes back, or reject permissions...) close this modal
    */
   async getPhotoAndGeo() {
-    this.photoService
-      .takePicture()
-      .then((image) => {
-        this.base64image = image.base64String;
-      })
-      .catch(this.dismiss.bind(this));
     this.geoService
       .getCurrentPosition()
       .then(({ coords }) => {
         this.lat = coords.latitude;
         this.lon = coords.longitude;
+        this.getPhoto();
       })
-      .catch(this.dismiss.bind(this));
+      .catch(async (error) => {
+        if (error.code === 1) {
+          const alert = await this.alertController.create({
+            header: 'Cant access Location!',
+            message: 'Please ensure you allowed the use of the GPS!',
+            buttons: ['Okay'],
+          });
+          await alert.present();
+        } else {
+          const alert = await this.alertController.create({
+            header: 'Cant access Location!',
+            message: 'Some weired error occured, dont know why :/ !',
+            buttons: ['Okay'],
+          });
+          await alert.present();
+        }
+        this.dismiss();
+      });
+  }
+
+  async getPhoto() {
+    this.photoService
+      .takePicture()
+      .then((image) => {
+        this.base64image = image.base64String;
+      })
+      .catch(async (error) => {
+        if (error.message !== 'User cancelled photos app') {
+          const alert = await this.alertController.create({
+            header: 'Cant open Camera!',
+            message: 'Please ensure you allowed the use of the Camera!',
+            buttons: ['Okay'],
+          });
+          await alert.present();
+        }
+        this.dismiss();
+      });
   }
 
   /**
@@ -67,10 +98,10 @@ export class UploadComponent implements OnInit {
         message: 'Please give you Tree a name!',
         buttons: ['Okay'],
       });
-
       await alert.present();
       return false;
     }
+    console.log(this.lon, this.lat);
     this.api
       .postUpload({
         userName,
