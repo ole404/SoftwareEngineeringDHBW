@@ -43,6 +43,7 @@ export class VotingPage implements OnInit {
 
   fade = true; // Sets opacity of cards to 0
   loadingTrees = true; // Used to show a progress bar
+  hasError = false; // Dont show voting-body if error occured
   clickable = false; // Used for click validation, so the user can't click multiple times
   animate = false; // Used to time animations, blocks new animation if the old one wasn't finished
 
@@ -66,6 +67,7 @@ export class VotingPage implements OnInit {
     this.treeLeft = undefined;
     this.treeRight = undefined;
     this.loadingTrees = true;
+    this.hasError = false;
     this.clickable = false;
     this.fade = true;
     this.isWinnerLeft = false;
@@ -92,6 +94,7 @@ export class VotingPage implements OnInit {
       (errorStatus: number) => {
         // On error: get error message based on response-status and show in dialog
         this.loadingTrees = false;
+        this.hasError = true;
         this.errorAlert(errorStatus);
       }
     );
@@ -124,6 +127,7 @@ export class VotingPage implements OnInit {
       (errorStatus: number) => {
         // On error: get error message based on response-status and show in dialog
         this.loadingTrees = false;
+        this.hasError = true;
         this.errorAlert(errorStatus);
       }
     );

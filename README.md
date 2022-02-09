@@ -6,7 +6,7 @@ TODO: write about app
 
 In order to use the Backend properly, a Google-Cloud account is needed. Please follow the Tutorial for the vision api authentication and projekt set-up on [this webiste](https://cloud.google.com/vision/docs/labels#set-up-your-gcp-project-and-authentication). After succesfully creating an account, download the config file and rename it to `gcloud.json` and paste it into the `server` folder.
 
-## Run
+## Run (Production)
 
 **Note:** Please ensure you can run `docker-compose` commands. To install docker visist the [Docker Homepage](https://www.docker.com/get-started)
 
@@ -17,12 +17,12 @@ cd docker
 docker-compose up
 
 # Alternativ
-docker-compose -f docker-compose.yaml up
+docker-compose -f docker/docker-compose.yaml up
 ```
 
-This will compile the TypeScript `server` and build the Ionic `client` and optimize the application for production mode. Then the TypeScript Express `server` starts and serves the static Ionic `client`. The application should start on [localhost](http://localhost) (Port 80).
+This will compile the TypeScript `server` and build the Ionic `client` and optimize the application for production mode. This will take a moment, so grab a cup of coffee and relax. Then the TypeScript Express `server` starts and serves the static Ionic `client`. The application should start on [localhost](http://localhost) (Port 80).
 
-## Develop
+## Develop (Local)
 
 To open the project in VS Code open the tannder.code-workspace file. E.g. from command line:
 
