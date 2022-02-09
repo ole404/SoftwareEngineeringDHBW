@@ -44,7 +44,7 @@ async function main() {
   // create express app
   const app = express();
 
-  // extend maximum body limit
+  // extend maximum body for being able to transfer images as base64
   app.use(express.json({ limit: '16mb' }));
 
   // use cors when in dev-mode, because the client is served in interactive mode on antoher port
