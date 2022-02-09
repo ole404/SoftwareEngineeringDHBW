@@ -9,7 +9,16 @@
     *ngIf="loadingTrees"
     type="indeterminate"
   ></ion-progress-bar>
-  <ion-grid *ngIf="!this.errorMsg && !loadingTrees" class="voting-body">
+
+  <ion-grid *ngIf="this.hasError && !loadingTrees" class="voting-body">
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <h1>Something went wrong! Try upload some trees!</h1>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid *ngIf="!this.hasError && !loadingTrees" class="voting-body">
     <ion-row>
       <ion-col class="ion-text-center">
         <h1>Select the prettier tree!</h1>

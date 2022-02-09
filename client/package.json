@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ionic serve",
-    "build": "ionic build",
+    "build": "ionic build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "format": "ng lint --fix",
@@ -53,6 +53,7 @@
     "@angular/language-service": "~13.0.0",
     "@capacitor/cli": "3.3.4",
     "@ionic/angular-toolkit": "^5.0.0",
+    "@ionic/cli": "^6.18.1",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
