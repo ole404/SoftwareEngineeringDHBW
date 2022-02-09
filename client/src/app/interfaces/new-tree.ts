@@ -5,5 +5,5 @@ export default interface NewTree {
   userName: string;
   treeName: string;
   geo: GeoInfo;
-  image: CameraResultType;
+  image: CameraResultType.Base64;
 }

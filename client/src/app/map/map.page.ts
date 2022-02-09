@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AlertController, Platform } from '@ionic/angular';
 import { Map, tileLayer, marker, icon } from 'leaflet';
 import { PhotoService } from '../services/photo.service';
 import { ApiService } from '../services/api.service';
@@ -12,24 +12,32 @@ import { Tree } from '../interfaces/index';
   templateUrl: './map.page.html',
   styleUrls: ['./map.page.scss'],
 })
-export class MapPage implements OnInit {
+export class MapPage implements OnInit, OnDestroy {
   treeLocations: Tree[] = [];
+  loadingTrees = true;
+  errorMsg = '';
+  public map: Map;
+  public zoom: number;
 
   constructor(
+    public alertController: AlertController,
     public plt: Platform,
     public photoService: PhotoService,
     private api: ApiService,
     private geoService: GeoService
   ) {}
 
-  ngOnInit() {}
+  public ngOnInit(): void {}
+
+  ngOnDestroy() {
+    this.map.clearAllEventListeners();
+    this.map.remove();
+  }
+
   //ngAfterViewInit(): void{}
   ionViewDidLoad(): void {}
-  ionViewDidEnter() {
+  ionViewDidEnter(): void {
     this.initMap();
-  }
-  takePicture() {
-    this.photoService.takePicture();
   }
 
   addMarkers(map) {
@@ -44,21 +52,44 @@ export class MapPage implements OnInit {
     }
   }
 
-  async getLocations(map) {
-    this.treeLocations = await this.api.getTrees(0);
-    console.log(this.treeLocations);
+  getLocations(map) {
+    this.api.getTrees(10).subscribe(
+      (body) => {
+        this.treeLocations = body;
+        this.loadingTrees = false;
+        this.addMarkers(map);
+      },
+      (errorStatus: number) => {
+        this.treeLocations = [];
+        this.loadingTrees = false;
+        this.errorMsg = this.api.getErrorMsg(errorStatus);
+        this.errorAlert();
+      }
+    );
+  }
+
+  private async errorAlert() {
+    const alert = await this.alertController.create({
+      header: 'Ups!',
+      message: this.errorMsg,
+      buttons: ['Okay'],
+    });
+
+    await alert.present();
   }
 
   private async initMap() {
     const { coords } = await this.geoService.getCurrentPosition();
-    const map = new Map('map').setView([coords.latitude, coords.longitude], 23); //TODO: maybe adapt zoom and starting location to trees
-
+    this.map = new Map('map').setView(
+      [coords.latitude || 51.477928, coords.longitude || -0.001545],
+      23
+    );
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    }).addTo(this.map);
 
-    map.invalidateSize();
+    this.map.invalidateSize();
 
     const customMarkerIcon = icon({
       iconUrl: '', //TODO: add tree icon and add to marker()
@@ -66,6 +97,6 @@ export class MapPage implements OnInit {
       popupAnchor: [0, -20],
     });
 
-    this.getLocations(map);
+    this.getLocations(this.map);
   }
 }

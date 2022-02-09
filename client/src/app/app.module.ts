@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -32,6 +33,7 @@ import { UploadComponent } from './components/upload/upload.component';
   imports: [
     BrowserModule,
     CommonModule,
+    FormsModule,
     HttpClientModule,
     IonicModule.forRoot(),
     AppRoutingModule,
@@ -52,6 +54,7 @@ import { UploadComponent } from './components/upload/upload.component';
     ApiService,
     GeoService,
     PhotoService,
+    Geolocation,
   ],
   bootstrap: [AppComponent],
 })

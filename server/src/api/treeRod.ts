@@ -1,100 +1,122 @@
 import Express, { Request, Response } from 'express';
 import { query, param, validationResult, check, body } from 'express-validator';
 
-import { Tree } from '../Schemas/treeSchema';
+import { Tree, NewTree } from './interfaces';
 import { calculateNewElo } from '../services/eloLogic';
 import { Treecognition } from '../services/treecognition';
-import { TreeStorage } from '../services/treeStorage';
+import { Forest } from '../services/forest';
 
 //Creating a router for the express api
 const router = Express.Router();
 
+const storage = Forest.getInstance();
+
 //get api either getting all trees or as many trees as the query parameter specifies
-router.get('/', async (req: Request, res: Response) => {
-  query('max').isInt().optional();
-  const numberOfTrees: string = req.query.max as string;
-  const max = parseInt(numberOfTrees);
-  //if the query parameter is empty, all trees are returned
-  if (max == 0 || numberOfTrees == null) {
-    const trees = await TreeStorage.getInstance().getAllTrees();
-    res.json(trees);
-    // else only the specified amount of trees are returned
-  } else {
-    const trees = await TreeStorage.getInstance().getTopTrees(max);
-    res.json(trees);
+router.get(
+  '/many',
+  query('max').isInt().optional(),
+  async (req: Request, res: Response<Tree[]>) => {
+    const max = parseInt(req.query.max as string) || 0;
+    //if the query parameter is empty, all trees are returned
+    if (max === 0) {
+      const trees = await storage.getAllTrees();
+      res.json(trees);
+      // else only the specified amount of trees are returned
+    } else {
+      const trees = await storage.getTopTrees(max);
+      res.json(trees);
+    }
   }
-});
+);
 
 //get api returning two randwom trees
-router.get('/random', async (req: Request, res: Response) => {
-  const trees = await TreeStorage.getInstance().getTwoRandomTrees();
-  res.send(trees);
-});
+router.get(
+  '/random',
+  async (req: Request, res: Response<{ treeLeft: Tree; treeRight: Tree }>) => {
+    const trees = await storage.getTwoRandomTrees().catch(() => {
+      res.sendStatus(579);
+      return null;
+    });
+    if (!trees) return;
 
-//get api returning the tree specified by its id
-router.get('/:treeId', async (req: Request, res: Response) => {
-  param('treeId').isMongoId();
-  const tree = await TreeStorage.getInstance().oneTree(req.params.treeId);
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    res.json(trees);
   }
-  res.send(tree);
-});
+);
 
 //get api only returning the image of the tree specified by the id
-router.get('/image/:treeId', async (req: Request, res: Response) => {
-  param('treeId').isMongoId();
-  if (!validationResult(req).isEmpty()) {
-    return res.status(400).json('Invalid treeId');
-  }
-  const tree = (await TreeStorage.getInstance().oneTree(
-    req.params.treeId
-  )) as Tree;
-  res.contentType('png');
-  const image = Buffer.from(tree.image, 'base64');
+router.get(
+  '/image/:treeId',
+  param('treeId').isMongoId(),
+  async (req: Request, res: Response<Buffer>) => {
+    if (!validationResult(req).isEmpty()) return res.sendStatus(400);
 
-  //converting the base64 tree image into a png
-  res.writeHead(200, {
-    'Content-Type': 'image/png',
-    'Content-Length': image.length,
-  });
-  res.end(image);
-});
+    const image = await storage.oneImage(req.params.treeId).catch(() => {
+      res.sendStatus(400);
+      return null;
+    });
+    if (!image) return;
+    const buffer = Buffer.from(image, 'base64');
+
+    //converting the base64 tree image into a png
+    res.contentType('jpeg');
+    res.writeHead(200, { 'Content-Length': buffer.length });
+    res.end(buffer);
+  }
+);
+
+//get api returning the tree specified by its id
+router.get(
+  '/single/:treeId',
+  param('treeId').isMongoId(),
+  async (req: Request, res: Response<Tree>) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.sendStatus(400);
+    const tree = await storage.oneTree(req.params.treeId).catch(() => {
+      res.sendStatus(400);
+      return null;
+    });
+    if (!tree) return;
+    res.json(tree);
+  }
+);
 
 //post api changing the elo scores of the trees specified
-router.post('/vote', async (req: Request, res: Response) => {
-  query('loserId').isMongoId();
-  query('winnerId').isMongoId();
-  const errors = validationResult(req);
+router.post(
+  '/vote',
+  [query('loserId').isMongoId(), query('winnerId').isMongoId()],
+  async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    let looserTree: Tree;
+    let winnerTree: Tree;
 
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    const loserId = req.query.loserId as string;
+    const winnerId = req.query.winnerId as string;
+
+    //getting the specified trees info from the database
+    try {
+      looserTree = await storage.oneTree(loserId);
+      winnerTree = await storage.oneTree(winnerId);
+    } catch {
+      return res.sendStatus(400);
+    }
+    //calculating the new elo score
+    const { newEloWinnerTree, newEloLooserTree } = calculateNewElo(
+      winnerTree.eloRating,
+      looserTree.eloRating
+    );
+    try {
+      storage.updateScore(winnerId, newEloWinnerTree);
+      storage.updateScore(loserId, newEloLooserTree);
+    } catch {
+      return res.sendStatus(400);
+    }
+
+    res.sendStatus(200);
   }
-
-  const loserId: string = req.query.loserId as string;
-  const winnerId: string = req.query.winnerId as string;
-
-  //getting the specified trees info from the database
-  const looserTree: Tree | null = await TreeStorage.getInstance().oneTree(
-    loserId
-  );
-  const winnerTree: Tree | null = await TreeStorage.getInstance().oneTree(
-    winnerId
-  );
-  if (looserTree == null || winnerTree == null) {
-    return res.status(400).json({ errors: [{ msg: 'Tree not found' }] });
-  }
-  //calculating the new elo score
-  const { newEloWinnerTree, newEloLooserTree } = calculateNewElo(
-    winnerTree.eloRating,
-    looserTree.eloRating
-  );
-  TreeStorage.getInstance().updateScore(winnerId, newEloWinnerTree);
-  TreeStorage.getInstance().updateScore(loserId, newEloLooserTree);
-
-  res.send(200);
-});
+);
 
 //post api uploading a new tree to the database
 router.post(
@@ -103,31 +125,28 @@ router.post(
     body('treeName').isString(),
     body('userName').isString(),
     check('image').isBase64().bail(),
-    check('image').custom(async (value: string) => {
-      //checking wether the image to be uploaded is actually a tree
-      const treeValidator = new Treecognition('gcloud.json');
-      const isTree = await treeValidator.checkForTree(value);
-      if (!isTree) {
-        throw new Error('Not a tree');
-      }
-    }),
     check('geo.lat').isFloat(),
     check('geo.lon').isFloat(),
   ],
   async (req: Request, res: Response) => {
-    const tree: Tree = req.body as Tree;
+    const tree = req.body as NewTree;
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty())
       return res.status(400).json({
-        errors: errors.array().map((val: validationResult) => ({
+        errors: errors.array().map((val) => ({
           msg: val.msg,
           location: val.location,
           param: val.param,
         })),
       });
+    //checking wether the image to be uploaded is actually a tree
+    const treeValidator = new Treecognition('gcloud.json');
+    const isTree = await treeValidator.checkForTree(tree.image);
+    if (!isTree) {
+      return res.status(489).send('Not a Tree');
     }
-    await TreeStorage.getInstance().insertTree(tree);
-    res.send(200);
+    await storage.insertTree(tree);
+    res.sendStatus(200);
   }
 );
 

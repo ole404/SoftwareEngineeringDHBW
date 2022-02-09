@@ -1,0 +1,269 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Tannder server REST-API",
+    "version": "1.0.0",
+    "title": "Tannder"
+  },
+  "host": "virtserver.swaggerhub.com",
+  "basePath": "/relativityhd/Tannder/1.0.0",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/trees/many": {
+      "get": {
+        "summary": "Get trees",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "max",
+            "in": "query",
+            "description": "Maximum number of returned 0 trees means all",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Tree"
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/trees/random": {
+      "get": {
+        "summary": "two random trees",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "schema": {
+              "$ref": "#/definitions/inline_response_200"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          },
+          "404": {
+            "description": "no trees found"
+          }
+        }
+      }
+    },
+    "/trees/vote": {
+      "post": {
+        "summary": "up/devote a tree",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "winnerId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "loserId",
+            "in": "query",
+            "description": "Whether tree has won or lost",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "item created"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/trees/upload": {
+      "post": {
+        "summary": "adds a tree",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "tree",
+            "description": "Tree to add",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/NewTree"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "item created"
+          },
+          "400": {
+            "description": "invalid input, object invalid"
+          }
+        }
+      }
+    },
+    "/trees/single/{treeId}": {
+      "get": {
+        "summary": "get tree by id",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "treeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "schema": {
+              "$ref": "#/definitions/Tree"
+            }
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    },
+    "/trees/image/{treeId}": {
+      "get": {
+        "summary": "Get image by tree id",
+        "produces": [
+          "image/*"
+        ],
+        "parameters": [
+          {
+            "name": "treeId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria"
+          },
+          "400": {
+            "description": "bad input parameter"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "NewTree": {
+      "type": "object",
+      "required": [
+        "geo",
+        "image",
+        "treeName",
+        "userName"
+      ],
+      "properties": {
+        "userName": {
+          "type": "string",
+          "example": "Tobi"
+        },
+        "treeName": {
+          "type": "string",
+          "example": "Peter Lightning"
+        },
+        "geo": {
+          "$ref": "#/definitions/GeoInfo"
+        },
+        "image": {
+          "type": "string",
+          "example": "veryyyy long image data"
+        }
+      }
+    },
+    "Tree": {
+      "type": "object",
+      "required": [
+        "eloRating",
+        "geo",
+        "id",
+        "treeName",
+        "userName"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+        },
+        "userName": {
+          "type": "string",
+          "example": "Tobi"
+        },
+        "treeName": {
+          "type": "string",
+          "example": "Peter Lightning"
+        },
+        "eloRating": {
+          "type": "number",
+          "example": 1234
+        },
+        "geo": {
+          "$ref": "#/definitions/GeoInfo"
+        }
+      }
+    },
+    "GeoInfo": {
+      "type": "object",
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "example": 42.380098
+        },
+        "lon": {
+          "type": "number",
+          "example": -71.116629
+        }
+      }
+    },
+    "inline_response_200": {
+      "type": "object",
+      "properties": {
+        "treeLeft": {
+          "$ref": "#/definitions/Tree"
+        },
+        "treeRight": {
+          "$ref": "#/definitions/Tree"
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { IonRouterOutlet } from '@ionic/angular';
+import { AlertController, IonRouterOutlet } from '@ionic/angular';
 import Tree from '../interfaces/tree';
 import { ApiService } from '../services/api.service';
 
@@ -8,15 +8,24 @@ enum Winner {
   right,
 }
 
+/**
+ * Sleep function similar to setTimeout but in an async/await fashion
+ * ```js
+ * // some code goes here
+ * await sleep(2000)
+ * // after 2 seconds code runs here
+ * ```
+ *
+ * @param ms sleep time in ms
+ * @returns void
+ */
 const sleep = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-const requestMock = async () => {
-  await sleep(500);
-  return 0;
-};
-
+// These must be equal to the animation lengths defined in the .scss
+const fadeAnimationLength = 300;
+const transformAnimationLength = 500;
 @Component({
   selector: 'app-voting',
   templateUrl: './voting.page.html',
@@ -25,108 +34,151 @@ const requestMock = async () => {
 export class VotingPage implements OnInit {
   @ViewChild('leaderboard') leaderboard;
 
-  // Used for click validation, so the user can't click multiple times
-  clickable = true;
-  fade = false;
+  treeLeft: Tree;
+  treeRight: Tree;
+
   winner: Winner;
   isWinnerLeft = false;
   isWinnerRight = false;
 
-  // Mock a tree object.
-  // TODO: query this from api
-  treeLeft: Tree = {
-    id: 'abcd',
-    userName: 'Tobias',
-    treeName: 'Peter Lightning',
-    eloRating: 1020,
-    geo: {
-      lat: 42.380098,
-      lon: -71.116629,
-    },
-  };
+  fade = true; // Sets opacity of cards to 0
+  loadingTrees = true; // Used to show a progress bar
+  clickable = false; // Used for click validation, so the user can't click multiple times
+  animate = false; // Used to time animations, blocks new animation if the old one wasn't finished
 
-  // TODO: query this from api
-  treeRight: Tree = {
-    id: 'njaslkd',
-    userName: 'Hans',
-    treeName: 'Hansis Schatz',
-    eloRating: 1201,
-    geo: {
-      lat: 42.380198,
-      lon: -71.116529,
-    },
-  };
+  constructor(
+    public routerOutlet: IonRouterOutlet,
+    private api: ApiService,
+    public alertController: AlertController
+  ) {}
 
-  // Won and lost (see note above) bound to tree component
-  wonRight = false;
-  lostRight = false;
+  /**
+   * Overall Flow of this component:
+   * - fetch() -> In-Animation / Show Error
+   * - _User votes_ -> vote() -> Out-Animation
+   * - postVote() -> Reset / Show Error
+   */
+  ngOnInit() {
+    this.fetch();
+  }
 
-  constructor(public routerOutlet: IonRouterOutlet, private api: ApiService) {}
+  reset() {
+    this.treeLeft = undefined;
+    this.treeRight = undefined;
+    this.loadingTrees = true;
+    this.clickable = false;
+    this.fade = true;
+    this.isWinnerLeft = false;
+    this.isWinnerRight = false;
+    this.winner = undefined;
+  }
 
-  ngOnInit() {}
-
+  async fetch() {
+    // Wait for old animation to stop
+    await sleep(
+      this.animate ? fadeAnimationLength + transformAnimationLength : 0
+    );
+    // Reset state
+    this.reset();
+    // Fetch: get two random trees from server
+    this.api.getNextTrees().subscribe(
+      (body) => {
+        // On success: set left/right tree and start fade-in animation
+        this.treeLeft = body.treeLeft;
+        this.treeRight = body.treeRight;
+        this.loadingTrees = false;
+        this.inAnimation();
+      },
+      (errorStatus: number) => {
+        // On error: get error message based on response-status and show in dialog
+        this.loadingTrees = false;
+        this.errorAlert(errorStatus);
+      }
+    );
+  }
   // User selected left tree
   onLeft() {
-    if (!this.verify()) return;
-    this.clickable = false;
-    this.winner = Winner.left;
-    // TODO: Api Post here
-    this.afterSelect();
+    this.vote(Winner.left);
   }
-
-  async vote(winningTree: Tree, loosingTree: Tree): Promise<void> {
-    await this.api.postVote(winningTree.id, loosingTree.id);
-  }
-
   // User selected right tree
   onRight() {
+    this.vote(Winner.right);
+  }
+
+  // Voting logic
+  vote(winner: Winner) {
     if (!this.verify()) return;
     this.clickable = false;
-    this.winner = Winner.right;
-    // TODO: Api Post here
-    this.afterSelect();
+    this.winner = winner;
+
+    const winnerId =
+      this.winner === Winner.left ? this.treeLeft.id : this.treeRight.id;
+    const loserId =
+      this.winner === Winner.left ? this.treeRight.id : this.treeLeft.id;
+
+    this.api.postVote(winnerId, loserId).subscribe(
+      () => {
+        // On success: reset everything and start fetching new trees
+        this.fetch();
+      },
+      (errorStatus: number) => {
+        // On error: get error message based on response-status and show in dialog
+        this.loadingTrees = false;
+        this.errorAlert(errorStatus);
+      }
+    );
+    this.outAnimation();
   }
 
-  // Checks if user already selected a tree
-  verify() {
-    return this.clickable;
+  /**
+   * Starts fade-in animation after fetch
+   */
+  inAnimation() {
+    this.animate = true;
+    this.fade = false;
+    setTimeout(() => {
+      this.animate = false;
+      this.clickable = true;
+    }, fadeAnimationLength);
   }
 
-  // User selected any tree -> Make animations and reset view after 2 seconds
-  afterSelect() {
-    // TODO: Start getting next trees here
+  /**
+   * Starts out-animation after user voted
+   */
+  outAnimation() {
+    this.animate = true;
     this.isWinnerLeft = this.winner === Winner.left;
     this.isWinnerRight = this.winner === Winner.right;
 
-    requestMock().then(() => {
-      this.resetView();
-    });
+    setTimeout(() => {
+      this.fade = true;
+    }, transformAnimationLength);
+
+    setTimeout(() => {
+      this.isWinnerRight = false;
+      this.isWinnerLeft = false;
+      this.animate = false;
+    }, fadeAnimationLength + transformAnimationLength);
   }
 
-  // Reset everyting and query new stuff
-  resetView() {
-    // TODO: update trees from GET Request from 'after Select'
-    // This simulates wait for GET Request
-    this.fade = true;
+  // Checks if user already selected a tree
+  private verify() {
+    return this.clickable;
+  }
 
-    const fadeAnimationLength = 300;
-    const transformAnimationLength = 500;
+  // Shows a pre-defined error message in a dialog
+  private async errorAlert(errorStatus) {
+    const errorMsg =
+      errorStatus === 579
+        ? 'The database has not enough Trees! Please upload images first (The plus button in the bottom right menu)'
+        : this.api.getErrorMsg(errorStatus);
 
-    setTimeout(
-      (() => {
-        this.winner = undefined;
-        this.isWinnerLeft = this.winner === Winner.left;
-        this.isWinnerRight = this.winner === Winner.right;
-      }).bind(this),
-      fadeAnimationLength
-    );
+    const alert = await this.alertController.create({
+      header: 'Ups!',
+      message: errorMsg,
+      buttons: ['Okay'],
+    });
 
-    setTimeout(
-      (() => {
-        this.clickable = true;
-        this.fade = false;
-      }).bind(this),
-      fadeAnimationLength + transformAnimationLength
-    );
+    await alert.present();
   }
 }

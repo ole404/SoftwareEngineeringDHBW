@@ -1,5 +1,6 @@
 .tree {
   display: inline-block;
+  width: 100%;
   opacity: 1;
   -webkit-transform: translate(0px, 0px);
   -moz-transform: translate(0px, 0px);
@@ -41,4 +42,9 @@
 .background {
   --background: url("/assets/wp8975771-usa-nature-4k-wallpapers.jpg") no-repeat
     center/cover fixed;
+}
+
+.voting-body {
+  max-width: 520px;
+  overflow-y: hidden;
 }

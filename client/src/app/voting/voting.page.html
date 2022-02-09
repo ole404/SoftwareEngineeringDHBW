@@ -5,15 +5,20 @@
 </ion-header>
 
 <ion-content class="background">
-  <ion-grid>
+  <ion-progress-bar
+    *ngIf="loadingTrees"
+    type="indeterminate"
+  ></ion-progress-bar>
+  <ion-grid *ngIf="!this.errorMsg && !loadingTrees" class="voting-body">
     <ion-row>
       <ion-col class="ion-text-center">
         <h1>Select the prettier tree!</h1>
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="6" size-sm="6">
+      <ion-col>
         <app-voting-tree
+          *ngIf="treeLeft"
           class="tree left"
           [ngClass]="{ 'fade': fade, 'center': isWinnerLeft, 'down': isWinnerRight }"
           [tree]="treeLeft"
@@ -21,8 +26,9 @@
         >
         </app-voting-tree>
       </ion-col>
-      <ion-col size="6" size-sm="6">
+      <ion-col>
         <app-voting-tree
+          *ngIf="treeRight"
           class="tree right"
           [ngClass]="{ 'fade': fade, 'center': isWinnerRight, 'down': isWinnerLeft }"
           [tree]="treeRight"

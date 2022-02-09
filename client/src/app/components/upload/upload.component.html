@@ -7,4 +7,32 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content> Upload here </ion-content>
+<ion-content>
+  <ion-card class="card" *ngIf="base64image">
+    <img
+      [src]="'data:image/jpeg;base64,' + base64image"
+      class="preview"
+      alt="Image"
+    />
+    <ion-card-header>
+      <ion-card-title>Preview</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <form (submit)="uploadItem()">
+        <ion-item lines="full">
+          <ion-label position="floating">Name your Tree!</ion-label>
+          <ion-input
+            [(ngModel)]="treeNameInput"
+            name="name-input"
+            type="text"
+            required
+          ></ion-input>
+        </ion-item>
+        <ion-button type="submit" color="danger" expand="block">
+          Submit
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
