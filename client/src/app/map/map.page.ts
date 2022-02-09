@@ -26,14 +26,13 @@ export class MapPage implements OnInit, OnDestroy {
     private api: ApiService,
     private geoService: GeoService
   ) {}
-  
 
   public ngOnInit(): void {}
 
   ngOnDestroy() {
-    this.map.clearAllEventListeners;
+    this.map.clearAllEventListeners();
     this.map.remove();
-  };
+  }
 
   //ngAfterViewInit(): void{}
   ionViewDidLoad(): void {}
@@ -58,7 +57,7 @@ export class MapPage implements OnInit, OnDestroy {
       (body) => {
         this.treeLocations = body;
         this.loadingTrees = false;
-        this.addMarkers(map)
+        this.addMarkers(map);
       },
       (errorStatus: number) => {
         this.treeLocations = [];
@@ -84,7 +83,7 @@ export class MapPage implements OnInit, OnDestroy {
     this.map = new Map('map').setView(
       [coords.latitude || 51.477928, coords.longitude || -0.001545],
       23
-    ); 
+    );
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',

@@ -37,10 +37,14 @@ function serveStatic(app: Express) {
 
 async function main() {
   // wait until connected to the database
-  console.log(dbUrl)
-  await TreeStorage.connectDb(dbUrl).then(() => {
-    console.log(`Connected to database at: ${dbUrl}`); // potentially unsafe expose of dbUrl in logs
-  }).catch((error)=>{console.log(error)});
+  console.log(dbUrl);
+  await TreeStorage.connectDb(dbUrl)
+    .then(() => {
+      console.log(`Connected to database at: ${dbUrl}`); // potentially unsafe expose of dbUrl in logs
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   // create express app
   const app = express();
