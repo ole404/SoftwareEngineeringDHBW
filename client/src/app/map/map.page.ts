@@ -6,6 +6,7 @@ import { ApiService } from '../services/api.service';
 import { GeoService } from '../services/geo.service';
 
 import { Tree } from '../interfaces/index';
+import { Geoposition } from '@awesome-cordova-plugins/geolocation/ngx';
 
 @Component({
   selector: 'app-map',
@@ -30,6 +31,7 @@ export class MapPage implements OnInit, OnDestroy {
   public ngOnInit(): void {}
 
   ngOnDestroy() {
+    if (!this.map) return;
     this.map.clearAllEventListeners();
     this.map.remove();
   }
@@ -78,12 +80,37 @@ export class MapPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
+  private getGeo() {
+    return new Promise<Geoposition | { coords: undefined }>((res) => {
+      this.geoService
+        .getCurrentPosition()
+        .then((geo) => {
+          res(geo);
+        })
+        .catch(async (error) => {
+          if (error.code === 1) {
+            const alert = await this.alertController.create({
+              header: 'Cant access Location!',
+              message: 'Please ensure you allowed the use of the GPS!',
+              buttons: ['Okay'],
+            });
+            await alert.present();
+          } else {
+            const alert = await this.alertController.create({
+              header: 'Cant access Location!',
+              message: 'Some weired error occured, dont know why :/ !',
+              buttons: ['Okay'],
+            });
+            await alert.present();
+          }
+          res({ coords: undefined });
+        });
+    });
+  }
   private async initMap() {
-    const { coords } = await this.geoService.getCurrentPosition();
-    this.map = new Map('map').setView(
-      [coords.latitude || 51.477928, coords.longitude || -0.001545],
-      23
-    );
+    const { coords } = await this.getGeo();
+    if (!coords) return;
+    this.map = new Map('map').setView([coords.latitude, coords.longitude], 23);
     tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
