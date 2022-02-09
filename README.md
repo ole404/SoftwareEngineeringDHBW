@@ -1,6 +1,6 @@
 # Tannder
 
-TODO: write about app
+Goal of Tannder is to revive Mark Zuckerbergs Face-Mesh, but without hat on girls. Therefore this app allows user to rate Christmas Trees! User have the ability to upload an image of a tree and then rate others.
 
 ## Prereq: Google-Cloud Account
 
