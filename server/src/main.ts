@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import http from 'http';
 import cors from 'cors';
 import treesRouter from './api/treeRod';
-import { TreeStorage } from './services/treeStorage';
+import { Forest } from './services/forest';
 import path from 'path';
 
 //load environment variables
@@ -38,7 +38,7 @@ function serveStatic(app: Express) {
 async function main() {
   // wait until connected to the database
   console.log(dbUrl);
-  await TreeStorage.connectDb(dbUrl)
+  await Forest.connectDb(dbUrl)
     .then(() => {
       console.log(`Connected to database at: ${dbUrl}`); // potentially unsafe expose of dbUrl in logs
     })

@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { treeModel } from '../Schemas/treeSchema';
 import { NewTree, Tree } from '../api/interfaces';
 
-export class TreeStorage {
-  private static instance: TreeStorage;
+export class Forest {
+  private static instance: Forest;
   databaseUri: string | undefined;
   connection: typeof mongoose | undefined;
 
@@ -12,8 +12,8 @@ export class TreeStorage {
    *
    * @returns An instance of the Database
    */
-  public static getInstance(): TreeStorage {
-    if (this.instance === undefined) this.instance = new TreeStorage();
+  public static getInstance(): Forest {
+    if (this.instance === undefined) this.instance = new Forest();
     return this.instance;
   }
   /**

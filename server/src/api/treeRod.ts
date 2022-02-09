@@ -4,12 +4,12 @@ import { query, param, validationResult, check, body } from 'express-validator';
 import { Tree, NewTree } from './interfaces';
 import { calculateNewElo } from '../services/eloLogic';
 import { Treecognition } from '../services/treecognition';
-import { TreeStorage } from '../services/treeStorage';
+import { Forest } from '../services/forest';
 
 //Creating a router for the express api
 const router = Express.Router();
 
-const storage = TreeStorage.getInstance();
+const storage = Forest.getInstance();
 
 //get api either getting all trees or as many trees as the query parameter specifies
 router.get(
